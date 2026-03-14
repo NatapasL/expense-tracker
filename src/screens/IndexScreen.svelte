@@ -14,7 +14,6 @@
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
-	let groupedBy = $state<'date' | 'category'>('date');
 	let showMonthPicker = $state(false);
 	let syncing = $state(false);
 
@@ -160,24 +159,26 @@
 
 		<div class="flex rounded-md bg-discord-sidebar p-1">
 			<button
-				class="flex-1 rounded py-1.5 text-sm font-medium {groupedBy === 'date'
+				class="flex-1 rounded py-1.5 text-sm font-medium {settings.groupedBy === 'date'
 					? 'bg-discord-blurple text-white'
 					: 'text-discord-text-normal hover:text-white'}"
-				onclick={() => (groupedBy = 'date')}>By Date</button
+				onclick={() => (settings.groupedBy = 'date')}>By Date</button
 			>
 			<button
-				class="flex-1 rounded py-1.5 text-sm font-medium {groupedBy === 'category'
+				class="flex-1 rounded py-1.5 text-sm font-medium {settings.groupedBy === 'category'
 					? 'bg-discord-blurple text-white'
 					: 'text-discord-text-normal hover:text-white'}"
-				onclick={() => (groupedBy = 'category')}>By Category</button
+				onclick={() => (settings.groupedBy = 'category')}>By Category</button
 			>
 		</div>
+
 
 		{#if expenses.length === 0}
 			<div class="py-10 text-center text-discord-text-muted">
 				No expenses this month yet. Tap + to add one.
 			</div>
-		{:else if groupedBy === 'date'}
+		{:else if settings.groupedBy === 'date'}
+
 			{#each groupedExpensesByDate as [dateStr, group] (dateStr)}
 				<div class="space-y-1">
 					<div class="flex items-center justify-between px-1 pt-1">
