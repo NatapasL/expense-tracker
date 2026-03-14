@@ -39,4 +39,8 @@
   - Added bottom navigation bar in `screens/LayoutScreen.svelte` for quick access to Home and Summary.
   - Set global currency symbol to `฿` in `libs/constants.ts`.
   - Created route `routes/summary/+page.svelte`.
-- [ ] **Step 10: Category Management**
+- [x] **Step 10: Category Management**
+  - Implemented `screens/CategoryListScreen.svelte` for managing categories with delete protection for in-use categories.
+  - Implemented `screens/AddEditCategoryScreen.svelte` with custom emoji icon and color palette selection.
+  - Wired up routes for listing, creating, and editing categories.
+  - Added navigation to category management from the Summary screen.
