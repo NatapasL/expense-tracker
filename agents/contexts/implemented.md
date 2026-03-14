@@ -44,3 +44,12 @@
   - Implemented `screens/AddEditCategoryScreen.svelte` with custom emoji icon and color palette selection.
   - Wired up routes for listing, creating, and editing categories.
   - Added navigation to category management from the Summary screen.
+
+## Additional Requirement 1
+
+- [x] **Step 1: Month Selection on Index Page**
+  - Updated `Header` component to support clickable title and callback.
+  - Implemented `selectedDate` state in `IndexScreen.svelte`.
+  - Added Month Selection Modal to allow browsing expenses by month/year.
+  - Updated DB query to reactfully filter expenses based on the selected month.
+  - Verified total calculations and list updates correctly.

@@ -10,13 +10,13 @@ This document provides detailed instructions, constraints, and a step-by-step br
 
 ## Overview
 
-- **Goal:** Personal money tracker PWA to track expenses.
+- **Goal:** Personal money tracker PWA to track expenses, named **Chiisa**.
 - **Design Process:** Compact, Mobile-first approach. Ensure all interfaces are optimized for smaller screens before scaling up.
 - **Production Build:** The app must be built as a static Single Page Application (SPA) compatible with GitHub Pages deployment.
 - **PWA Features:** Must be an offline-first PWA, allowing users to use the app fully without an internet connection.
 - **Theme:** Dark theme with a color palette similar to the Discord app.
 - **Database:** IndexedDB (Dexie.js) for local data.
-- **Sync:** Sync data to a Google Sheet once a day when the user opens the app (when online).
+- **Sync:** Sync data to a Google Sheet. First-time users sync from sheet if it exists, otherwise create new. Daily background sync when app opens. Use a soft-delete approach (mark as deleted) in Google Sheets. Add a `synced` flag to entities.
 - **Auth:** First-time users must log in with a Google account.
 - **Currency:** No currency symbol.
 
@@ -42,7 +42,7 @@ The `/src` directory MUST strictly follow this structure:
 
 ## Entity Schema & Seed Data
 
-### 1. Item (Expense)
+### 1. Expense
 
 - `amount`: number
 - `category`: string (reference to Category)
@@ -154,4 +154,4 @@ Execute the following steps one at a time. **Remember to update `contexts/implem
 
 ## Additional 1
 
-See `contexts/additional_requirement_1.md`
+See `contexts/additional-requirement-1.md`
