@@ -56,8 +56,6 @@ class AuthState {
 	}
 
 	private setupClient() {
-		console.log(PUBLIC_VITE_GOOGLE_CLIENT_ID)
-
 		this.tokenClient = window.google.accounts.oauth2.initTokenClient({
 			client_id: PUBLIC_VITE_GOOGLE_CLIENT_ID,
 			scope:
