@@ -37,19 +37,16 @@ class AuthState {
 		const savedExpiry = localStorage.getItem('google_token_expiry');
 		
 		if (savedToken && savedExpiry) {
-			this.accessToken = savedToken;
-			this.tokenExpiry = parseInt(savedExpiry);
+			const expiry = parseInt(savedExpiry);
 			
-			// If token is expired or about to expire (within 5 mins), refresh it
-			if (Date.now() > this.tokenExpiry - 300000) {
-				console.log('Token expired or near expiry, refreshing...');
-				// We can't call silentRefresh directly yet because setupClient might not have finished
-				// but setupClient is called synchronously above if window.google is ready.
-				// If not, it will be handled in setupClient when it finishes.
-				if (this.isInitialized) {
-					this.silentRefresh();
-				}
+			// If token is expired or about to expire (within 5 mins), don't auto-refresh.
+			// Instead, clear it to force a manual login when the user interacts.
+			if (Date.now() > expiry - 300000) {
+				console.log('Token expired or near expiry, clearing for manual login...');
+				this.logout();
 			} else {
+				this.accessToken = savedToken;
+				this.tokenExpiry = expiry;
 				this.fetchUserInfo();
 			}
 		}
@@ -64,6 +61,9 @@ class AuthState {
 			callback: (response: any) => {
 				if (response.error !== undefined) {
 					console.error('Google Auth Error:', response);
+					if (response.error === 'interaction_required') {
+						this.logout();
+					}
 					return;
 				}
 				this.accessToken = response.access_token;
@@ -77,11 +77,6 @@ class AuthState {
 			}
 		});
 		this.isInitialized = true;
-		
-		// If we had a token but it's expired, refresh now that client is ready
-		if (this.accessToken && this.tokenExpiry && Date.now() > this.tokenExpiry - 300000) {
-			this.silentRefresh();
-		}
 	}
 
 	silentRefresh() {
@@ -91,7 +86,7 @@ class AuthState {
 		}
 	}
 
-	async fetchUserInfo(retry = true) {
+	async fetchUserInfo() {
 		if (!this.accessToken) return;
 		try {
 			const res = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
@@ -101,10 +96,9 @@ class AuthState {
 			});
 			if (!res.ok) {
 				// Token might be expired
-				if (res.status === 401 && retry) {
-					console.log('User info 401, attempting silent refresh...');
-					this.silentRefresh();
-					// The callback will call fetchUserInfo again upon success
+				if (res.status === 401) {
+					console.log('User info 401, clearing session...');
+					this.logout();
 					return;
 				}
 				throw new Error('Failed to fetch user info');
