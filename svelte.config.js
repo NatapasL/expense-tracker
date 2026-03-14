@@ -10,7 +10,7 @@ const config = {
 			fallback: 'index.html'
 		}),
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/expense-tracker' : '',
+			base: (process.env.BASE_PATH?.replace(/\/$/, '') || (process.env.NODE_ENV === 'production' ? '/expense-tracker' : '')),
 		}
 	},
 	vitePlugin: {
