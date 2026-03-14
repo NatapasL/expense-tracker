@@ -10,7 +10,7 @@ declare global {
 class AuthState {
 	accessToken = $state<string | null>(null);
 	user = $state<{ name: string; picture: string } | null>(null);
-    isInitialized = $state<boolean>(false);
+	isInitialized = $state<boolean>(false);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private tokenClient: any = null;
@@ -22,27 +22,28 @@ class AuthState {
 		if (window.google) {
 			this.setupClient();
 		} else {
-            // Wait for script to load
-            const interval = setInterval(() => {
-                if (window.google) {
-                    clearInterval(interval);
-                    this.setupClient();
-                }
-            }, 100);
-        }
-        
-        // Restore from localStorage
-        const savedToken = localStorage.getItem('google_access_token');
-        if (savedToken) {
-            this.accessToken = savedToken;
-            this.fetchUserInfo();
-        }
+			// Wait for script to load
+			const interval = setInterval(() => {
+				if (window.google) {
+					clearInterval(interval);
+					this.setupClient();
+				}
+			}, 100);
+		}
+
+		// Restore from localStorage
+		const savedToken = localStorage.getItem('google_access_token');
+		if (savedToken) {
+			this.accessToken = savedToken;
+			this.fetchUserInfo();
+		}
 	}
 
 	private setupClient() {
 		this.tokenClient = window.google.accounts.oauth2.initTokenClient({
 			client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-			scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
+			scope:
+				'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			callback: (response: any) => {
 				if (response.error !== undefined) {
@@ -50,13 +51,13 @@ class AuthState {
 					return;
 				}
 				this.accessToken = response.access_token;
-                if (this.accessToken) {
-                    localStorage.setItem('google_access_token', this.accessToken);
-				    this.fetchUserInfo();
-                }
+				if (this.accessToken) {
+					localStorage.setItem('google_access_token', this.accessToken);
+					this.fetchUserInfo();
+				}
 			}
 		});
-        this.isInitialized = true;
+		this.isInitialized = true;
 	}
 
 	async fetchUserInfo() {
@@ -68,12 +69,12 @@ class AuthState {
 				}
 			});
 			if (!res.ok) {
-                // Token might be expired
-                if (res.status === 401) {
-                    this.logout();
-                }
-                throw new Error('Failed to fetch user info');
-            }
+				// Token might be expired
+				if (res.status === 401) {
+					this.logout();
+				}
+				throw new Error('Failed to fetch user info');
+			}
 			this.user = await res.json();
 		} catch (error) {
 			console.error('Error fetching user info:', error);
@@ -84,8 +85,8 @@ class AuthState {
 		if (this.tokenClient) {
 			this.tokenClient.requestAccessToken();
 		} else {
-            console.error("Google Token Client not initialized");
-        }
+			console.error('Google Token Client not initialized');
+		}
 	}
 
 	logout() {
@@ -96,7 +97,7 @@ class AuthState {
 		}
 		this.accessToken = null;
 		this.user = null;
-        localStorage.removeItem('google_access_token');
+		localStorage.removeItem('google_access_token');
 	}
 
 	get isAuthenticated() {

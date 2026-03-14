@@ -10,8 +10,8 @@ export default defineConfig({
 		SvelteKitPWA({
 			registerType: 'autoUpdate',
 			manifest: {
-				name: 'Money Tracker',
-				short_name: 'MoneyTracker',
+				name: 'Chiisa',
+				short_name: 'Chiisa',
 				description: 'Personal money tracker PWA to track expenses.',
 				theme_color: '#36393f',
 				background_color: '#36393f',

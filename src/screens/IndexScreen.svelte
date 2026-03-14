@@ -2,41 +2,53 @@
 	import Header from '../components/Header.svelte';
 	import Card from '../components/Card.svelte';
 	import MonthPicker from '../feature/MonthPicker.svelte';
-	import { db, type Item, type Category } from '../libs/dexie';
+	import { db, type Expense, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 
-	let items: Item[] = $state([]);
+	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
 	let groupedBy = $state<'date' | 'category'>('date');
 	let selectedDate = $state(new Date());
 	let showMonthPicker = $state(false);
 
-	let startOfMonth = $derived(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString());
-	let endOfMonth = $derived(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999).toISOString());
-	let monthLabel = $derived(selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+	let startOfMonth = $derived(
+		new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString()
+	);
+	let endOfMonth = $derived(
+		new Date(
+			selectedDate.getFullYear(),
+			selectedDate.getMonth() + 1,
+			0,
+			23,
+			59,
+			59,
+			999
+		).toISOString()
+	);
+	let monthLabel = $derived(
+		selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+	);
 
 	$effect(() => {
 		// Access derived values here to ensure Svelte 5 tracks them as dependencies for this effect
 		const start = startOfMonth;
 		const end = endOfMonth;
-		
-		const itemsObservable = liveQuery(
-			() => db.items.where('date').between(start, end).toArray()
+
+		const expensesObservable = liveQuery(() =>
+			db.expenses.where('date').between(start, end).toArray()
 		);
-		const itemsSub = itemsObservable.subscribe(val => {
-			items = val || [];
+		const expensesSub = expensesObservable.subscribe((val) => {
+			expenses = val || [];
 		});
-		return () => itemsSub.unsubscribe();
+		return () => expensesSub.unsubscribe();
 	});
 
-	const categoriesObservable = liveQuery(
-		() => db.categories.toArray()
-	);
+	const categoriesObservable = liveQuery(() => db.categories.toArray());
 
-	const catSub = categoriesObservable.subscribe(val => {
+	const catSub = categoriesObservable.subscribe((val) => {
 		categories = val || [];
 	});
 
@@ -44,131 +56,184 @@
 		catSub.unsubscribe();
 	});
 
-	let totalSpent = $derived(items.reduce((sum, item) => sum + item.amount, 0));
+	let totalSpent = $derived(expenses.reduce((sum, expense) => sum + expense.amount, 0));
 
-	let groupedItemsByDate = $derived.by(() => {
-		const groups: Record<string, { total: number; items: Item[] }> = {};
-		items.forEach(item => {
-			const d = item.date.split('T')[0];
-			if (!groups[d]) groups[d] = { total: 0, items: [] };
-			groups[d].items.push(item);
-			groups[d].total += item.amount;
+	let groupedExpensesByDate = $derived.by(() => {
+		const groups: Record<string, { total: number; expenses: Expense[] }> = {};
+		expenses.forEach((expense) => {
+			const d = expense.date.split('T')[0];
+			if (!groups[d]) groups[d] = { total: 0, expenses: [] };
+			groups[d].expenses.push(expense);
+			groups[d].total += expense.amount;
 		});
 		return Object.entries(groups).sort((a, b) => b[0].localeCompare(a[0]));
 	});
 
-	let groupedItemsByCategory = $derived.by(() => {
-		const groups: Record<string, { total: number; items: Item[]; category: Category | undefined }> = {};
-		items.forEach(item => {
-			const cid = item.category;
+	let groupedExpensesByCategory = $derived.by(() => {
+		const groups: Record<
+			string,
+			{ total: number; expenses: Expense[]; category: Category | undefined }
+		> = {};
+		expenses.forEach((expense) => {
+			const cid = expense.category;
 			if (!groups[cid]) {
-				const cat = categories.find(c => c.id === cid);
-				groups[cid] = { total: 0, items: [], category: cat };
+				const cat = categories.find((c) => c.id === cid);
+				groups[cid] = { total: 0, expenses: [], category: cat };
 			}
-			groups[cid].items.push(item);
-			groups[cid].total += item.amount;
+			groups[cid].expenses.push(expense);
+			groups[cid].total += expense.amount;
 		});
 		return Object.entries(groups).sort((a, b) => b[1].total - a[1].total);
 	});
 
 	function getCategory(cid: string) {
-		return categories.find(c => c.id === cid) || { id: 'unknown', name: 'Unknown', color: '#999', icon: '❓' };
+		return (
+			categories.find((c) => c.id === cid) || {
+				id: 'unknown',
+				name: 'Unknown',
+				color: '#999',
+				icon: '❓'
+			}
+		);
 	}
-
-
 </script>
 
-<div class="h-full flex flex-col relative pb-20">
-	<Header 
-		title={monthLabel} 
-		clickable={true} 
+<div class="relative flex h-full flex-col pb-20">
+	<Header
+		title={monthLabel}
+		clickable={true}
 		onclick={() => {
 			showMonthPicker = true;
-		}} 
+		}}
 	/>
 
-	<div class="flex-1 overflow-y-auto p-3 space-y-2">
+	<div class="flex-1 space-y-2 overflow-y-auto p-3">
 		<Card variant="panel" class="flex items-center justify-between px-4 py-2">
-			<h2 class="text-discord-text-muted text-[13px] uppercase font-bold tracking-wider">Total Spent</h2>
+			<h2 class="text-[13px] font-bold tracking-wider text-discord-text-muted uppercase">
+				Total Spent
+			</h2>
 			<div class="text-lg font-extrabold text-white">{CURRENCY_SYMBOL}{totalSpent.toFixed(2)}</div>
 		</Card>
 
-		<div class="flex bg-discord-sidebar rounded-md p-1">
-			<button class="flex-1 py-1.5 text-sm font-medium rounded {groupedBy === 'date' ? 'bg-discord-blurple text-white' : 'text-discord-text-normal hover:text-white'}" onclick={() => groupedBy = 'date'}>By Date</button>
-			<button class="flex-1 py-1.5 text-sm font-medium rounded {groupedBy === 'category' ? 'bg-discord-blurple text-white' : 'text-discord-text-normal hover:text-white'}" onclick={() => groupedBy = 'category'}>By Category</button>
+		<div class="flex rounded-md bg-discord-sidebar p-1">
+			<button
+				class="flex-1 rounded py-1.5 text-sm font-medium {groupedBy === 'date'
+					? 'bg-discord-blurple text-white'
+					: 'text-discord-text-normal hover:text-white'}"
+				onclick={() => (groupedBy = 'date')}>By Date</button
+			>
+			<button
+				class="flex-1 rounded py-1.5 text-sm font-medium {groupedBy === 'category'
+					? 'bg-discord-blurple text-white'
+					: 'text-discord-text-normal hover:text-white'}"
+				onclick={() => (groupedBy = 'category')}>By Category</button
+			>
 		</div>
 
-		{#if items.length === 0}
-			<div class="text-center text-discord-text-muted py-10">
+		{#if expenses.length === 0}
+			<div class="py-10 text-center text-discord-text-muted">
 				No expenses this month yet. Tap + to add one.
 			</div>
+		{:else if groupedBy === 'date'}
+			{#each groupedExpensesByDate as [dateStr, group] (dateStr)}
+				<div class="space-y-1">
+					<div class="flex items-center justify-between px-1 pt-1">
+						<h3 class="text-[13px] font-semibold tracking-wide text-discord-text-muted uppercase">
+							{new Date(dateStr).toLocaleDateString('en-US', {
+								weekday: 'short',
+								month: 'short',
+								day: 'numeric'
+							})}
+						</h3>
+						<span class="text-[13px] font-bold text-discord-text-muted"
+							>{CURRENCY_SYMBOL}{group.total.toFixed(2)}</span
+						>
+					</div>
+					<div class="space-y-2">
+						{#each group.expenses as expense (expense.id)}
+							{@const cat = getCategory(expense.category)}
+							<a href={resolve(`/expense/${expense.id}`)} class="block">
+								<Card
+									variant="sidebar"
+									padding="none"
+									class="flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors hover:bg-discord-panel"
+								>
+									<div
+										class="flex h-8 w-8 items-center justify-center rounded-full text-lg"
+										style="background-color: {cat.color}33; color: {cat.color}"
+									>
+										{cat.icon}
+									</div>
+									<div class="min-w-0 flex-1">
+										<div class="truncate text-[15px] font-medium text-white">{cat.name}</div>
+										<div class="text-xs text-discord-text-muted">{expense.description}</div>
+									</div>
+									<div class="text-[15px] font-semibold text-white">
+										{CURRENCY_SYMBOL}{expense.amount.toFixed(2)}
+									</div>
+								</Card>
+							</a>
+						{/each}
+					</div>
+				</div>
+			{/each}
 		{:else}
-			{#if groupedBy === 'date'}
-				{#each groupedItemsByDate as [dateStr, group] (dateStr)}
-					<div class="space-y-1">
-						<div class="flex justify-between items-center px-1 pt-1">
-							<h3 class="text-[13px] font-semibold text-discord-text-muted uppercase tracking-wide">{new Date(dateStr).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</h3>
-							<span class="text-[13px] font-bold text-discord-text-muted">{CURRENCY_SYMBOL}{group.total.toFixed(2)}</span>
+			{#each groupedExpensesByCategory as [cid, group] (cid)}
+				{@const cat = group.category || getCategory(cid)}
+				<div class="space-y-1">
+					<div class="flex items-center justify-between px-1 pt-1">
+						<div class="flex items-center gap-1.5">
+							<span class="text-base">{cat.icon}</span>
+							<h3 class="text-[13px] font-semibold tracking-wide text-discord-text-muted uppercase">
+								{cat.name}
+							</h3>
 						</div>
-						<div class="space-y-2">
-							{#each group.items as item (item.id)}
-								{@const cat = getCategory(item.category)}
-								<a href={resolve(`/expense/${item.id}`)} class="block">
-									<Card variant="sidebar" padding="none" class="flex items-center gap-3 px-3 py-2 hover:bg-discord-panel transition-colors cursor-pointer">
-										<div class="w-8 h-8 rounded-full flex items-center justify-center text-lg" style="background-color: {cat.color}33; color: {cat.color}">
-											{cat.icon}
-										</div>
-										<div class="flex-1 min-w-0">
-											<div class="font-medium text-white truncate text-[15px]">{cat.name}</div>
-											<div class="text-xs text-discord-text-muted">{item.description}</div>
-										</div>
-										<div class="font-semibold text-white text-[15px]">
-											{CURRENCY_SYMBOL}{item.amount.toFixed(2)}
-										</div>
-									</Card>
-								</a>
-							{/each}
-						</div>
+						<span class="text-[13px] font-bold text-discord-text-muted"
+							>{CURRENCY_SYMBOL}{group.total.toFixed(2)}</span
+						>
 					</div>
-				{/each}
-			{:else}
-				{#each groupedItemsByCategory as [cid, group] (cid)}
-					{@const cat = group.category || getCategory(cid)}
-					<div class="space-y-1">
-						<div class="flex justify-between items-center px-1 pt-1">
-							<div class="flex items-center gap-1.5">
-								<span class="text-base">{cat.icon}</span>
-								<h3 class="text-[13px] font-semibold text-discord-text-muted uppercase tracking-wide">{cat.name}</h3>
-							</div>
-							<span class="text-[13px] font-bold text-discord-text-muted">{CURRENCY_SYMBOL}{group.total.toFixed(2)}</span>
-						</div>
-						<div class="space-y-2">
-							{#each group.items as item (item.id)}
-								<a href={resolve(`/expense/${item.id}`)} class="block">
-									<Card variant="sidebar" padding="none" class="flex items-center gap-3 px-3 py-2 hover:bg-discord-panel transition-colors cursor-pointer">
-										<div class="flex-1 min-w-0">
-											<div class="font-medium text-white truncate text-[15px]">{new Date(item.date).toLocaleDateString()}</div>
-											<div class="text-xs text-discord-text-muted">{item.description}</div>
+					<div class="space-y-2">
+						{#each group.expenses as expense (expense.id)}
+							<a href={resolve(`/expense/${expense.id}`)} class="block">
+								<Card
+									variant="sidebar"
+									padding="none"
+									class="flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors hover:bg-discord-panel"
+								>
+									<div class="min-w-0 flex-1">
+										<div class="truncate text-[15px] font-medium text-white">
+											{new Date(expense.date).toLocaleDateString()}
 										</div>
-										<div class="font-semibold text-white text-[15px]">
-											{CURRENCY_SYMBOL}{item.amount.toFixed(2)}
-										</div>
-									</Card>
-								</a>
-							{/each}
-						</div>
+										<div class="text-xs text-discord-text-muted">{expense.description}</div>
+									</div>
+									<div class="text-[15px] font-semibold text-white">
+										{CURRENCY_SYMBOL}{expense.amount.toFixed(2)}
+									</div>
+								</Card>
+							</a>
+						{/each}
 					</div>
-				{/each}
-			{/if}
+				</div>
+			{/each}
 		{/if}
 	</div>
 
 	<!-- FAB -->
-	<div class="fixed bottom-6 right-6 z-50">
+	<div class="fixed right-6 bottom-6 z-50">
 		<a href={resolve(`/expense/new`)} aria-label="Add Expense via Link">
-			<button aria-label="Add Expense" class="w-14 h-14 bg-discord-blurple hover:bg-[#4752C4] text-white rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-discord-bg transition-transform hover:scale-105 active:scale-95">
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-				  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+			<button
+				aria-label="Add Expense"
+				class="flex h-14 w-14 items-center justify-center rounded-full bg-discord-blurple text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#4752C4] focus:ring-2 focus:ring-offset-2 focus:ring-offset-discord-bg focus:outline-none active:scale-95"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
 				</svg>
 			</button>
 		</a>

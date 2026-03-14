@@ -7,23 +7,23 @@ export interface Category {
 	icon: string; // emoji icon
 }
 
-export interface Item {
+export interface Expense {
 	id: string; // unique identifier
 	amount: number;
 	category: string; // reference to Category.id
-	date: string; // ISO string 
+	date: string; // ISO string
 	description: string;
 }
 
 const db = new Dexie('MoneyTrackerDB') as Dexie & {
 	categories: EntityTable<Category, 'id'>;
-	items: EntityTable<Item, 'id'>;
+	expenses: EntityTable<Expense, 'id'>;
 };
 
 // Schema declaration
-db.version(1).stores({
+db.version(2).stores({
 	categories: 'id, name',
-	items: 'id, category, date'
+	expenses: 'id, category, date'
 });
 
 const defaultCategories: Category[] = [

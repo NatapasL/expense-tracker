@@ -34,9 +34,8 @@
 		'#E67E22', // Orange
 		'#E74C3C', // Alizarin
 		'#95A5A6', // Grey
-		'#4F545C'  // Dark Grey
+		'#4F545C' // Dark Grey
 	];
-
 
 	$effect(() => {
 		if (id) {
@@ -114,29 +113,40 @@
 	}
 </script>
 
-<div class="h-full flex flex-col">
+<div class="flex h-full flex-col">
 	<Header title={isEditing ? 'Edit Category' : 'New Category'}>
 		{#snippet leftIcon()}
-			<button 
-				onclick={cancel} 
-				class="text-discord-text-muted hover:text-white transition-colors p-1"
+			<button
+				onclick={cancel}
+				class="p-1 text-discord-text-muted transition-colors hover:text-white"
 				aria-label="Cancel"
 			>
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M15 19l-7-7 7-7"
+					/>
 				</svg>
 			</button>
 		{/snippet}
 	</Header>
 
-	<div class="flex-1 overflow-y-auto p-4 space-y-6 pb-20">
+	<div class="flex-1 space-y-6 overflow-y-auto p-4 pb-20">
 		{#if loading}
-			<div class="text-center text-discord-text-muted py-16">Loading...</div>
+			<div class="py-16 text-center text-discord-text-muted">Loading...</div>
 		{:else}
 			<!-- Preview Card -->
 			<div class="flex justify-center py-4">
-				<div 
-					class="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-lg border-4 border-discord-sidebar transition-all duration-300"
+				<div
+					class="flex h-20 w-20 items-center justify-center rounded-full border-4 border-discord-sidebar text-4xl shadow-lg transition-all duration-300"
 					style="background-color: {color}33; color: {color}"
 				>
 					{icon}
@@ -145,37 +155,47 @@
 
 			<!-- Form Fields -->
 			<div class="space-y-4">
-				<Input 
-					label="Category Name" 
-					placeholder="e.g. Travel" 
-					bind:value={name} 
+				<Input
+					label="Category Name"
+					placeholder="e.g. Travel"
+					bind:value={name}
 					error={nameError}
 				/>
 
 				<div>
-					<label for="icon-input" class="text-xs font-bold text-discord-text-muted uppercase tracking-wider mb-2 block px-1">Icon (Emoji)</label>
-					<div class="flex justify-center mb-3">
-						<input 
+					<label
+						for="icon-input"
+						class="mb-2 block px-1 text-xs font-bold tracking-wider text-discord-text-muted uppercase"
+						>Icon (Emoji)</label
+					>
+					<div class="mb-3 flex justify-center">
+						<input
 							id="icon-input"
-							type="text" 
+							type="text"
 							value={icon}
 							oninput={handleIconInput}
 							placeholder="?"
-							class="w-16 h-16 text-3xl text-center bg-discord-panel border border-black/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-discord-blurple shadow-inner"
+							class="h-16 w-16 rounded-xl border border-black/30 bg-discord-panel text-center text-3xl shadow-inner focus:ring-2 focus:ring-discord-blurple focus:outline-none"
 						/>
 					</div>
 					{#if iconError}
-						<p class="text-xs text-discord-red mt-1 font-medium px-1 text-center">{iconError}</p>
+						<p class="mt-1 px-1 text-center text-xs font-medium text-discord-red">{iconError}</p>
 					{/if}
 				</div>
 
 				<div>
-					<h3 class="text-xs font-bold text-discord-text-muted uppercase tracking-wider mb-2 block px-1">Color Palette</h3>
+					<h3
+						class="mb-2 block px-1 text-xs font-bold tracking-wider text-discord-text-muted uppercase"
+					>
+						Color Palette
+					</h3>
 					<div class="grid grid-cols-6 gap-3 p-1">
 						{#each discordColors as c (c)}
-							<button 
-								onclick={() => color = c}
-								class="w-full aspect-square rounded-full border-4 transition-all {color === c ? 'border-white' : 'border-transparent hover:scale-110'}"
+							<button
+								onclick={() => (color = c)}
+								class="aspect-square w-full rounded-full border-4 transition-all {color === c
+									? 'border-white'
+									: 'border-transparent hover:scale-110'}"
 								style="background-color: {c}"
 								aria-label="Color {c}"
 								type="button"
@@ -185,13 +205,11 @@
 				</div>
 			</div>
 
-			<div class="pt-4 space-y-3">
+			<div class="space-y-3 pt-4">
 				<Button variant="primary" fullWidth onclick={save} disabled={saving}>
 					{saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Category'}
 				</Button>
-				<Button variant="secondary" fullWidth onclick={cancel}>
-					Cancel
-				</Button>
+				<Button variant="secondary" fullWidth onclick={cancel}>Cancel</Button>
 			</div>
 		{/if}
 	</div>

@@ -12,28 +12,30 @@
 	let { title, leftIcon, rightIcon, onclick, clickable = false }: Props = $props();
 </script>
 
-<header class="bg-discord-sidebar border-b border-black/20 h-10 flex items-center px-4 sticky top-0 z-30">
-	<div class="w-10 flex items-center justify-start flex-shrink-0">
+<header
+	class="sticky top-0 z-30 flex h-10 items-center border-b border-black/20 bg-discord-sidebar px-4"
+>
+	<div class="flex w-10 flex-shrink-0 items-center justify-start">
 		{@render leftIcon?.()}
 	</div>
-	
-	<div class="flex-1 flex justify-center min-w-0">
+
+	<div class="flex min-w-0 flex-1 justify-center">
 		{#if clickable}
-			<button 
-				class="font-bold text-white truncate px-2 text-[15px] hover:bg-white/5 rounded transition-colors"
-				onclick={onclick}
+			<button
+				class="truncate rounded px-2 text-[15px] font-bold text-white transition-colors hover:bg-white/5"
+				{onclick}
 			>
 				{title}
-				<span class="text-[10px] ml-1 opacity-50">▼</span>
+				<span class="ml-1 text-[10px] opacity-50">▼</span>
 			</button>
 		{:else}
-			<h1 class="font-bold text-white truncate px-2 text-[15px]">
+			<h1 class="truncate px-2 text-[15px] font-bold text-white">
 				{title}
 			</h1>
 		{/if}
 	</div>
 
-	<div class="w-10 flex items-center justify-end flex-shrink-0">
+	<div class="flex w-10 flex-shrink-0 items-center justify-end">
 		{@render rightIcon?.()}
 	</div>
 </header>

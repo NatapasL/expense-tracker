@@ -3,7 +3,7 @@
 	import Card from '../components/Card.svelte';
 	import Button from '../components/Button.svelte';
 	import Modal from '../components/Modal.svelte';
-	import { db, type Item, type Category } from '../libs/dexie';
+	import { db, type Expense, type Category } from '../libs/dexie';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
@@ -14,15 +14,15 @@
 
 	let { id }: Props = $props();
 
-	let item = $state<Item | undefined>(undefined);
+	let expense = $state<Expense | undefined>(undefined);
 	let category = $state<Category | undefined>(undefined);
 	let loading = $state(true);
 	let showDeleteModal = $state(false);
 	let deleting = $state(false);
 
 	$effect(() => {
-		db.items.get(id).then(async (found) => {
-			item = found;
+		db.expenses.get(id).then(async (found) => {
+			expense = found;
 			if (found) {
 				category = await db.categories.get(found.category);
 			}
@@ -31,52 +31,72 @@
 	});
 
 	async function deleteExpense() {
-		if (!item?.id) return;
+		if (!expense?.id) return;
 		deleting = true;
-		await db.items.delete(item.id);
+		await db.expenses.delete(expense.id);
 		goto(resolve(`/`));
 	}
-
 </script>
 
-<div class="h-full flex flex-col">
+<div class="flex h-full flex-col">
 	<Header title="Expense Detail">
 		{#snippet leftIcon()}
-			<a href={resolve(`/`)} aria-label="Back" class="text-discord-text-muted hover:text-white transition-colors p-1">
-				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+			<a
+				href={resolve(`/`)}
+				aria-label="Back"
+				class="p-1 text-discord-text-muted transition-colors hover:text-white"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-5 w-5"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+					stroke-width="2"
+				>
 					<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
 				</svg>
 			</a>
 		{/snippet}
 	</Header>
 
-	<div class="flex-1 overflow-y-auto p-3 space-y-2">
+	<div class="flex-1 space-y-2 overflow-y-auto p-3">
 		{#if loading}
-			<div class="text-center text-discord-text-muted py-16">Loading...</div>
-		{:else if !item}
-			<div class="text-center text-discord-text-muted py-16">Expense not found.</div>
+			<div class="py-16 text-center text-discord-text-muted">Loading...</div>
+		{:else if !expense}
+			<div class="py-16 text-center text-discord-text-muted">Expense not found.</div>
 		{:else}
 			<!-- Compact item row (same as index page) -->
 			<Card variant="sidebar" padding="sm" class="flex items-center gap-3">
 				{#if category}
 					<div
-						class="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0"
+						class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-xl"
 						style="background-color: {category.color}33; color: {category.color}"
 					>
 						{category.icon}
 					</div>
 				{/if}
-				<div class="flex-1 min-w-0">
-					<div class="font-medium text-white truncate">{category?.name ?? 'Unknown'}</div>
-					<div class="text-xs text-discord-text-muted">{new Date(item.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+				<div class="min-w-0 flex-1">
+					<div class="truncate font-medium text-white">{category?.name ?? 'Unknown'}</div>
+					<div class="text-xs text-discord-text-muted">
+						{new Date(expense.date).toLocaleDateString('en-US', {
+							weekday: 'short',
+							month: 'short',
+							day: 'numeric'
+						})}
+					</div>
 				</div>
-				<div class="font-semibold text-white flex-shrink-0">{CURRENCY_SYMBOL}{item.amount.toFixed(2)}</div>
+				<div class="flex-shrink-0 font-semibold text-white">
+					{CURRENCY_SYMBOL}{expense.amount.toFixed(2)}
+				</div>
 			</Card>
 
 			<!-- Description box -->
 			<Card variant="panel" class="px-4 py-3">
-				<p class="text-xs font-bold text-discord-text-muted uppercase tracking-wider mb-1">Description</p>
-				<p class="text-discord-text-normal text-sm">{item.description || '—'}</p>
+				<p class="mb-1 text-xs font-bold tracking-wider text-discord-text-muted uppercase">
+					Description
+				</p>
+				<p class="text-sm text-discord-text-normal">{expense.description || '—'}</p>
 			</Card>
 
 			<!-- Actions -->
@@ -84,15 +104,11 @@
 				<Button
 					variant="secondary"
 					fullWidth
-					onclick={() => goto(resolve(`/expense/${item!.id}/edit`) )}
+					onclick={() => goto(resolve(`/expense/${expense!.id}/edit`))}
 				>
 					✏️ Edit
 				</Button>
-				<Button
-					variant="danger"
-					fullWidth
-					onclick={() => (showDeleteModal = true)}
-				>
+				<Button variant="danger" fullWidth onclick={() => (showDeleteModal = true)}>
 					🗑️ Delete
 				</Button>
 			</div>
@@ -100,14 +116,13 @@
 	</div>
 </div>
 
-
 <!-- Delete Confirmation Modal -->
 <Modal open={showDeleteModal} onclose={() => (showDeleteModal = false)} title="Delete Expense">
-	<p class="text-discord-text-normal text-sm">
+	<p class="text-sm text-discord-text-normal">
 		Are you sure you want to delete this expense? This action cannot be undone.
 	</p>
 	{#snippet footer()}
-		<div class="flex gap-3 justify-end">
+		<div class="flex justify-end gap-3">
 			<Button variant="secondary" onclick={() => (showDeleteModal = false)}>Cancel</Button>
 			<Button variant="danger" onclick={deleteExpense} disabled={deleting}>
 				{deleting ? 'Deleting...' : 'Delete'}

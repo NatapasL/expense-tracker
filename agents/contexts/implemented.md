@@ -59,7 +59,9 @@
   - Updated all analytics (Total Spent, Daily Average, Category Breakdown, Weekly Totals) to reflect the selected month.
   - Verified UI interactions and data reactivity in the browser.
 
-- [x] **Refactoring: Reusable Month Picker Feature**
-  - Extracted common month selection logic and logic from `IndexScreen.svelte` and `SummaryScreen.svelte` into `src/feature/MonthPicker.svelte`.
-  - Simplified state management and UI code in both screens by using the new component.
-  - Verified consistent behavior across the application.
+- [x] **Step 3: Rename Entity and App Brand**
+  - Performed a global rename of "Item" entity to "Expense" in code, database schema, and UI labels.
+  - Updated database version to 2 to handle the `expenses` table rename.
+  - Updated app branding and display name to "Chiisa" in PWA manifest and UI.
+  - Configured Google Sheets sync to use `expense_tracker` as the file name and `Expenses` as the sheet name.
+  - Verified all references and functionality across all screens.

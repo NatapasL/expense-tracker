@@ -1,7 +1,7 @@
 import { auth } from './auth.svelte';
 import { db } from './dexie';
 
-const SYNC_FILE_NAME = 'MoneyTracker_Sync';
+const SYNC_FILE_NAME = 'expense_tracker';
 
 export async function checkAndRunDailySync() {
 	if (!auth.isAuthenticated) return;
@@ -19,8 +19,8 @@ export async function checkAndRunDailySync() {
 			console.error('Failed to sync to Google Sheets:', error);
 		}
 	} else {
-        console.log('Daily sync already completed today.');
-    }
+		console.log('Daily sync already completed today.');
+	}
 }
 
 async function syncToGoogleSheets() {
@@ -37,13 +37,13 @@ async function syncToGoogleSheets() {
 	if (!spreadsheetId) throw new Error('Could not get or create spreadsheet ID');
 
 	// 3. Get all data from Dexie
-	const items = await db.items.toArray();
+	const expenses = await db.expenses.toArray();
 	const categories = await db.categories.toArray();
 
 	// Prepare values format
-	const itemValues = [
+	const expenseValues = [
 		['ID', 'Amount', 'Category', 'Date', 'Description'], // Header
-		...items.map((i) => [i.id, i.amount.toString(), i.category, i.date, i.description])
+		...expenses.map((e) => [e.id, e.amount.toString(), e.category, e.date, e.description])
 	];
 
 	const categoryValues = [
@@ -59,46 +59,54 @@ async function syncToGoogleSheets() {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			ranges: ['Items', 'Categories']
+			ranges: ['Expenses', 'Categories']
 		})
 	});
 
 	// 5. Update data
-	const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`, {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${auth.accessToken}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			valueInputOption: 'USER_ENTERED',
-			data: [
-				{
-					range: 'Items!A1',
-					values: itemValues
-				},
-				{
-					range: 'Categories!A1',
-					values: categoryValues
-				}
-			]
-		})
-	});
+	const res = await fetch(
+		`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`,
+		{
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${auth.accessToken}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				valueInputOption: 'USER_ENTERED',
+				data: [
+					{
+						range: 'Expenses!A1',
+						values: expenseValues
+					},
+					{
+						range: 'Categories!A1',
+						values: categoryValues
+					}
+				]
+			})
+		}
+	);
 
 	if (!res.ok) {
-        const errorText = await res.text();
+		const errorText = await res.text();
 		throw new Error(`Failed to update sheet: ${errorText}`);
 	}
 }
 
 async function findSpreadsheetId(): Promise<string | null> {
-    if (!auth.accessToken) return null;
-	const q = encodeURIComponent(`name='${SYNC_FILE_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`);
-	const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
-		headers: {
-			Authorization: `Bearer ${auth.accessToken}`
+	if (!auth.accessToken) return null;
+	const q = encodeURIComponent(
+		`name='${SYNC_FILE_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`
+	);
+	const res = await fetch(
+		`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,
+		{
+			headers: {
+				Authorization: `Bearer ${auth.accessToken}`
+			}
 		}
-	});
+	);
 
 	if (!res.ok) throw new Error('Failed to search Drive');
 
@@ -110,7 +118,7 @@ async function findSpreadsheetId(): Promise<string | null> {
 }
 
 async function createSpreadsheet(): Promise<string | null> {
-    if (!auth.accessToken) return null;
+	if (!auth.accessToken) return null;
 	const res = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
 		method: 'POST',
 		headers: {
@@ -121,10 +129,7 @@ async function createSpreadsheet(): Promise<string | null> {
 			properties: {
 				title: SYNC_FILE_NAME
 			},
-			sheets: [
-				{ properties: { title: 'Items' } },
-				{ properties: { title: 'Categories' } }
-			]
+			sheets: [{ properties: { title: 'Expenses' } }, { properties: { title: 'Categories' } }]
 		})
 	});
 
