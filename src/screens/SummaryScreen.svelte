@@ -111,32 +111,46 @@
 
 	let weeklyTotals = $derived.by(() => {
 		const groups: { label: string; total: number }[] = [];
-		const monthStart = new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth(), 1);
-		const monthEnd = new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth() + 1, 0);
+		const year = settings.selectedDate.getFullYear();
+		const month = settings.selectedDate.getMonth();
+		const monthStart = new Date(year, month, 1);
+		const monthEnd = new Date(year, month + 1, 0);
 		const totalDays = monthEnd.getDate();
 		const today = new Date();
 		const isCurrentMonth =
-			today.getMonth() === settings.selectedDate.getMonth() &&
-			today.getFullYear() === settings.selectedDate.getFullYear();
+			today.getMonth() === month &&
+			today.getFullYear() === year;
 
+		const firstDayOfWeek = monthStart.getDay(); // 0 (Sun) to 6 (Sat)
+		// Distance to the first Sunday (end of first calendar week)
+		const daysToSunday = (7 - firstDayOfWeek) % 7;
+		let currentStart = 1;
 
-		for (let i = 0; i < 5; i++) {
-			const start = i * 7 + 1;
-			if (start > totalDays) break;
-			const end = Math.min((i + 1) * 7, totalDays);
+		while (currentStart <= totalDays) {
+			let currentEnd;
+			if (currentStart === 1) {
+				currentEnd = Math.min(1 + daysToSunday, totalDays);
+			} else {
+				currentEnd = Math.min(currentStart + 6, totalDays);
+			}
 
 			const monthName = monthStart.toLocaleDateString('en-US', { month: 'short' });
-			const label = `${monthName} ${start}-${end}`;
+			const label =
+				currentStart === currentEnd
+					? `${monthName} ${currentStart}`
+					: `${monthName} ${currentStart}-${currentEnd}`;
 
 			const total = expenses.reduce((sum, expense) => {
 				const expenseDate = new Date(expense.date);
 				const day = expenseDate.getDate();
-				return day >= start && day <= end ? sum + expense.amount : sum;
+				return day >= currentStart && day <= currentEnd ? sum + expense.amount : sum;
 			}, 0);
 
-			if (total > 0 || (isCurrentMonth && start <= today.getDate())) {
+			if (total > 0 || (isCurrentMonth && currentStart <= today.getDate())) {
 				groups.push({ label, total });
 			}
+
+			currentStart = currentEnd + 1;
 		}
 		return groups;
 	});
