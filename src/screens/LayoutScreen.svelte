@@ -2,24 +2,26 @@
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
+	import { auth } from '../libs/auth.svelte';
 
 	let { children }: { children: Snippet } = $props();
 
-	const isLoginRoute = $derived($page.route.id === '/login');
+	// Show navigation only if authenticated
+	const showNav = $derived(auth.isAuthenticated);
 </script>
 
 <div class="h-full min-h-screen bg-gray-900 text-gray-100">
 	<main
-		class="relative min-h-screen w-full max-w-md p-4 {isLoginRoute
-			? 'pb-4'
-			: 'pb-24'} mx-auto flex flex-col border-x border-gray-800 bg-gray-900"
+		class="relative min-h-screen w-full max-w-md p-4 {showNav
+			? 'pb-24'
+			: 'pb-4'} mx-auto flex flex-col border-x border-gray-800 bg-gray-900"
 	>
 		<div class="flex-1">
 			{@render children()}
 		</div>
 
 		<!-- Bottom Nav -->
-		{#if !isLoginRoute}
+		{#if showNav}
 			<nav
 				class="fixed bottom-0 left-1/2 z-40 flex h-16 w-full max-w-md -translate-x-1/2 items-center justify-around border-t border-black/20 bg-discord-panel px-6"
 			>

@@ -1,10 +1,8 @@
 <script lang="ts">
 	import './layout.css';
 	import LayoutScreen from '../screens/LayoutScreen.svelte';
+	import LoginScreen from '../screens/LoginScreen.svelte';
 	import { auth } from '../libs/auth.svelte';
-	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
@@ -12,20 +10,18 @@
 	onMount(() => {
 		auth.init();
 	});
-
-	$effect(() => {
-		if (auth.isInitialized) {
-			const isLoginRoute = $page.route.id === '/login';
-			
-			if (!auth.isAuthenticated && !isLoginRoute) {
-				goto(resolve('/login'), { replaceState: true }).catch(console.error);
-			} else if (auth.isAuthenticated && isLoginRoute) {
-				goto(resolve('/'), { replaceState: true }).catch(console.error);
-			}
-		}
-	});
 </script>
 
 <LayoutScreen>
-	{@render children()}
+	{#if auth.isInitialized}
+		{#if auth.isAuthenticated}
+			{@render children()}
+		{:else}
+			<LoginScreen />
+		{/if}
+	{:else}
+		<div class="flex h-full min-h-screen items-center justify-center bg-gray-900 text-gray-100">
+			<div class="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+		</div>
+	{/if}
 </LayoutScreen>
