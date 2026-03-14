@@ -35,7 +35,6 @@ jobs:
         run: pnpm build
         env:
           VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
-          BASE_PATH: '/expense-tracker/'
           NODE_ENV: production
 
       - name: Upload Artifacts
