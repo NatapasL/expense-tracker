@@ -89,8 +89,9 @@
 - [x] **Step 2: Update Date Formatting on Index Page**
   - Updated "By Category" view in `IndexScreen.svelte` to show dates as 'DD MMM YYYY, ddd'.
 - [x] **Step 3: Default Date Logic on Add Expense Page**
-  - Updated FAB in `IndexScreen.svelte` to pass the selected date to the Add Expense page.
-  - Updated `AddEditExpenseScreen.svelte` to use the passed date as the default.
+  - Updated `AddEditExpenseScreen.svelte` to use session storage for remembering the last used date when adding new expenses.
+  - Refactored `IndexScreen.svelte` to remove date query parameters from the "Add Expense" link.
+  - Ensures the last used date is remembered across consecutive additions, but not influenced by edits.
 - [x] **Step 4: Auto-select Category based on Amount**
   - Implemented historical category suggestion in `AddEditExpenseScreen.svelte` based on the most frequent category for a given amount in the last 3 months.
   - Ensured auto-selection does not override manual user choice.

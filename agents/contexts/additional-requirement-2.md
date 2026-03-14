@@ -34,7 +34,7 @@ This document breaks down the implementation of additional UI and logic enhancem
 
 - Update the "Add Expense" logic (specifically for new expenses, not editing).
 - Requirements:
-  - If a date has already been selected (e.g., from a filter or calendar state), use it as the default.
+  - If a date has already been selected from previously added expense, use it as the default.
   - Otherwise, default to today's date.
 - _Update `agents/contexts/implemented.md`_
 

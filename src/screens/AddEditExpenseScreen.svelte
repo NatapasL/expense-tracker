@@ -9,7 +9,6 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
-	import { page } from '$app/state';
 
 	interface Props {
 		/** If provided, we are in edit mode for this item id */
@@ -24,8 +23,8 @@
 	let amount = $state('');
 	let categoryId = $state('');
 	let date = $state(
-		!id && page.url.searchParams.get('date')
-			? page.url.searchParams.get('date')!
+		!id && typeof sessionStorage !== 'undefined' && sessionStorage.getItem('lastUsedDate')
+			? sessionStorage.getItem('lastUsedDate')!
 			: new Date().toISOString().split('T')[0]
 	);
 	let description = $state('');
@@ -148,6 +147,9 @@
 			goto(resolve(`/expense/${expenseData.id}`));
 		} else {
 			await db.expenses.add(expenseData);
+			if (typeof sessionStorage !== 'undefined') {
+				sessionStorage.setItem('lastUsedDate', date);
+			}
 			goto(resolve(`/`));
 		}
 	}

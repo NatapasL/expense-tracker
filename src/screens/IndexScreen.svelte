@@ -261,7 +261,7 @@
 
 	<!-- FAB -->
 	<div class="fixed right-6 bottom-6 z-50">
-		<a href={resolve(`/expense/new?date=${selectedDate.toISOString().split('T')[0]}`)} aria-label="Add Expense via Link">
+		<a href={resolve(`/expense/new`)} aria-label="Add Expense via Link">
 			<button
 				aria-label="Add Expense"
 				class="flex h-14 w-14 items-center justify-center rounded-full bg-discord-blurple text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#4752C4] focus:ring-2 focus:ring-offset-2 focus:ring-offset-discord-bg focus:outline-none active:scale-95"
