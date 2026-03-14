@@ -18,7 +18,7 @@ This document provides detailed instructions, constraints, and a step-by-step br
 - **Database:** IndexedDB (Dexie.js) for local data.
 - **Sync:** Sync data to a Google Sheet. First-time users sync from sheet if it exists, otherwise create new. Daily background sync when app opens. Use a soft-delete approach (mark as deleted) in Google Sheets. Add a `synced` flag to entities.
 - **Auth:** First-time users must log in with a Google account.
-- **Currency:** No currency symbol.
+- **Currency:** No currency symbol. Always display 2 decimal places and use comma as thousand separator (e.g., 1,000,000.00).
 
 ## Tech Stack & Tooling Constraints
 
@@ -155,3 +155,7 @@ Execute the following steps one at a time. **Remember to update `contexts/implem
 ## Additional 1
 
 See `contexts/additional-requirement-1.md`
+
+## Additional 2
+
+See `contexts/additional-requirement-2.md`
