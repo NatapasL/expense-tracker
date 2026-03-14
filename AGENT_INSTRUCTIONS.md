@@ -7,6 +7,14 @@
 
 ---
 
+## Convention
+
+- Make it DRY
+- If it small, generic and reusable, make it as a component
+- If it feature that use by multiple screens, make it as a feature
+- If it component that contain business logic of that page, make it a screen
+- If there is generic function that use by multiple feature, or screen, make it as a utility
+
 ## App Instruction && Requirement
 
 - agents/contexts/instruction.md
