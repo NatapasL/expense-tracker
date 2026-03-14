@@ -9,6 +9,7 @@
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { syncToGoogleSheets } from '../libs/sync';
+	import { formatCurrency } from '../libs/utils';
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
@@ -209,7 +210,7 @@
 					>Total Spent</span
 				>
 				<span class="text-xl font-extrabold text-white"
-					>{CURRENCY_SYMBOL}{totalSpent.toFixed(2)}</span
+					>{CURRENCY_SYMBOL}{formatCurrency(totalSpent)}</span
 				>
 			</Card>
 			<Card variant="panel" class="flex flex-col items-center p-4">
@@ -217,7 +218,7 @@
 					>Daily Avg</span
 				>
 				<span class="text-xl font-extrabold text-white"
-					>{CURRENCY_SYMBOL}{dailyAverage.toFixed(2)}</span
+					>{CURRENCY_SYMBOL}{formatCurrency(dailyAverage)}</span
 				>
 			</Card>
 		</div>
@@ -251,7 +252,7 @@
 						</div>
 						<div class="shrink-0 text-right">
 							<div class="text-[15px] font-bold text-white">
-								{CURRENCY_SYMBOL}{stat.total.toFixed(2)}
+								{CURRENCY_SYMBOL}{formatCurrency(stat.total)}
 							</div>
 							<div class="text-[10px] font-medium text-discord-text-muted">
 								{((stat.total / totalSpent) * 100).toFixed(0)}%
@@ -285,7 +286,7 @@
 								></div>
 							</div>
 							<span class="w-16 text-right text-xs font-bold text-white"
-								>{CURRENCY_SYMBOL}{group.total.toFixed(0)}</span
+								>{CURRENCY_SYMBOL}{formatCurrency(group.total)}</span
 							>
 						</div>
 					{:else}

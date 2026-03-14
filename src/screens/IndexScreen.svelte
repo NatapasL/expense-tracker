@@ -8,6 +8,7 @@
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 	import { syncToGoogleSheets } from '../libs/sync';
+	import { formatCurrency, formatDateLong } from '../libs/utils';
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
@@ -152,7 +153,7 @@
 			<h2 class="text-[13px] font-bold tracking-wider text-discord-text-muted uppercase">
 				Total Spent
 			</h2>
-			<div class="text-lg font-extrabold text-white">{CURRENCY_SYMBOL}{totalSpent.toFixed(2)}</div>
+			<div class="text-lg font-extrabold text-white">{CURRENCY_SYMBOL}{formatCurrency(totalSpent)}</div>
 		</Card>
 
 		<div class="flex rounded-md bg-discord-sidebar p-1">
@@ -186,7 +187,7 @@
 							})}
 						</h3>
 						<span class="text-[13px] font-bold text-discord-text-muted"
-							>{CURRENCY_SYMBOL}{group.total.toFixed(2)}</span
+							>{CURRENCY_SYMBOL}{formatCurrency(group.total)}</span
 						>
 					</div>
 					<div class="space-y-2">
@@ -209,7 +210,7 @@
 										<div class="text-xs text-discord-text-muted">{expense.description}</div>
 									</div>
 									<div class="text-[15px] font-semibold text-white">
-										{CURRENCY_SYMBOL}{expense.amount.toFixed(2)}
+										{CURRENCY_SYMBOL}{formatCurrency(expense.amount)}
 									</div>
 								</Card>
 							</a>
@@ -229,7 +230,7 @@
 							</h3>
 						</div>
 						<span class="text-[13px] font-bold text-discord-text-muted"
-							>{CURRENCY_SYMBOL}{group.total.toFixed(2)}</span
+							>{CURRENCY_SYMBOL}{formatCurrency(group.total)}</span
 						>
 					</div>
 					<div class="space-y-2">
@@ -242,12 +243,12 @@
 								>
 									<div class="min-w-0 flex-1">
 										<div class="truncate text-[15px] font-medium text-white">
-											{new Date(expense.date).toLocaleDateString()}
+											{formatDateLong(expense.date)}
 										</div>
 										<div class="text-xs text-discord-text-muted">{expense.description}</div>
 									</div>
 									<div class="text-[15px] font-semibold text-white">
-										{CURRENCY_SYMBOL}{expense.amount.toFixed(2)}
+										{CURRENCY_SYMBOL}{formatCurrency(expense.amount)}
 									</div>
 								</Card>
 							</a>
@@ -260,7 +261,7 @@
 
 	<!-- FAB -->
 	<div class="fixed right-6 bottom-6 z-50">
-		<a href={resolve(`/expense/new`)} aria-label="Add Expense via Link">
+		<a href={resolve(`/expense/new?date=${selectedDate.toISOString().split('T')[0]}`)} aria-label="Add Expense via Link">
 			<button
 				aria-label="Add Expense"
 				class="flex h-14 w-14 items-center justify-center rounded-full bg-discord-blurple text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#4752C4] focus:ring-2 focus:ring-offset-2 focus:ring-offset-discord-bg focus:outline-none active:scale-95"

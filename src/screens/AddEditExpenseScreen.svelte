@@ -9,6 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
+	import { page } from '$app/state';
 
 	interface Props {
 		/** If provided, we are in edit mode for this item id */
@@ -22,10 +23,15 @@
 	// form state
 	let amount = $state('');
 	let categoryId = $state('');
-	let date = $state(new Date().toISOString().split('T')[0]);
+	let date = $state(
+		!id && page.url.searchParams.get('date')
+			? page.url.searchParams.get('date')!
+			: new Date().toISOString().split('T')[0]
+	);
 	let description = $state('');
 	let saving = $state(false);
 	let loading = $state(true);
+	let userHasSelectedCategory = $state(false);
 
 	$effect(() => {
 		if (id) {
@@ -62,10 +68,42 @@
 					categoryId = found.category;
 					date = found.date.split('T')[0];
 					description = found.description;
+					userHasSelectedCategory = true; // prevent auto-select when editing
 				}
 				loading = false;
 			});
 		}
+	});
+
+	// Auto-select category based on amount
+	$effect(() => {
+		if (isEditing || userHasSelectedCategory || !amount || categories.length === 0) return;
+
+		const parsedAmount = parseFloat(amount);
+		if (isNaN(parsedAmount) || parsedAmount <= 0) return;
+
+		const threeMonthsAgo = Date.now() - 3 * 30 * 24 * 60 * 60 * 1000;
+
+		console.log(parsedAmount)
+		db.expenses
+			.where('amount')
+			.equals(parsedAmount)
+			.and((e) => e.updatedAt > threeMonthsAgo && e.deleted === 0)
+			.toArray()
+			.then((matches) => {
+				if (matches.length > 0) {
+					// Count frequency
+					const counts: Record<string, number> = {};
+					matches.forEach((m) => {
+						counts[m.category] = (counts[m.category] || 0) + 1;
+					});
+					const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+					const mostFrequent = sorted[0][0];
+					if (categoryId !== mostFrequent) {
+						categoryId = mostFrequent;
+					}
+				}
+			});
 	});
 
 	function validate() {
@@ -185,7 +223,10 @@
 				<div class="grid grid-cols-4 gap-2">
 					{#each categories as cat (cat.id)}
 						<button
-							onclick={() => (categoryId = cat.id)}
+							onclick={() => {
+								categoryId = cat.id;
+								userHasSelectedCategory = true;
+							}}
 							class="flex flex-col items-center gap-1 rounded-lg border-2 p-2 transition-all {categoryId ===
 							cat.id
 								? 'border-discord-blurple bg-discord-blurple/10'

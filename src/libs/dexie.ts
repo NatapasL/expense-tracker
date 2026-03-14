@@ -27,9 +27,9 @@ const db = new Dexie('MoneyTrackerDB') as Dexie & {
 };
 
 // Schema declaration
-db.version(3).stores({
+db.version(4).stores({
 	categories: 'id, name, synced, deleted, updatedAt',
-	expenses: 'id, category, date, synced, deleted, updatedAt'
+	expenses: 'id, category, amount, date, synced, deleted, updatedAt'
 });
 
 const defaultCategories: (Omit<Category, 'synced' | 'deleted' | 'updatedAt'> & Partial<Category>)[] = [

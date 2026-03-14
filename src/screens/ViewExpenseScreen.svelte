@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
+	import { formatCurrency } from '../libs/utils';
 
 	interface Props {
 		id: string;
@@ -91,7 +92,7 @@
 					</div>
 				</div>
 				<div class="flex-shrink-0 font-semibold text-white">
-					{CURRENCY_SYMBOL}{expense.amount.toFixed(2)}
+					{CURRENCY_SYMBOL}{formatCurrency(expense.amount)}
 				</div>
 			</Card>
 

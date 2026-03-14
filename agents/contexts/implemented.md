@@ -80,3 +80,18 @@
   - Added conflict resolution using `updatedAt` timestamps.
   - Refined `checkAndRunDailySync` to force a pull for first-time users on a new device.
   - Fixed TypeScript errors and ensured type safety in sync logic.
+
+## Additional Requirement 2
+
+- [x] **Step 1: Universal Currency Formatting Utility**
+  - Created logic in `src/libs/utils.ts` for consistent currency display (commas and 2 decimal places).
+  - Applied to Index, Summary, and View Detail screens.
+- [x] **Step 2: Update Date Formatting on Index Page**
+  - Updated "By Category" view in `IndexScreen.svelte` to show dates as 'DD MMM YYYY, ddd'.
+- [x] **Step 3: Default Date Logic on Add Expense Page**
+  - Updated FAB in `IndexScreen.svelte` to pass the selected date to the Add Expense page.
+  - Updated `AddEditExpenseScreen.svelte` to use the passed date as the default.
+- [x] **Step 4: Auto-select Category based on Amount**
+  - Implemented historical category suggestion in `AddEditExpenseScreen.svelte` based on the most frequent category for a given amount in the last 3 months.
+  - Ensured auto-selection does not override manual user choice.
+

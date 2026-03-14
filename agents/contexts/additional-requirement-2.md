@@ -33,7 +33,7 @@ This document breaks down the implementation of additional UI and logic enhancem
 ### Step 3: Default Date Logic on Add Expense Page
 
 - Update the "Add Expense" logic (specifically for new expenses, not editing).
-- Requirements: 
+- Requirements:
   - If a date has already been selected (e.g., from a filter or calendar state), use it as the default.
   - Otherwise, default to today's date.
 - _Update `agents/contexts/implemented.md`_
@@ -43,7 +43,7 @@ This document breaks down the implementation of additional UI and logic enhancem
 - Implement intelligent category selection in the "Add Expense" form.
 - Requirements:
   - When the user fills in the `amount`, automatically select the category based on historical data.
-  - Search criteria: Most frequent category for that specific amount within the last 3 months.
+  - Search criteria: Most frequent category for that specific amount within the last 3 months (don't count soft deleted).
   - If no history exists for that amount, select the first category.
   - **Constraint:** Do not change the category if the user has already manually selected one.
 - _Update `agents/contexts/implemented.md`_
