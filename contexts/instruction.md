@@ -16,6 +16,7 @@ This document provides detailed instructions, constraints, and a step-by-step br
 - **Database:** IndexedDB (Dexie.js) for local data.
 - **Sync:** Sync data to a Google Sheet once a day when the user opens the app (when online).
 - **Auth:** First-time users must log in with a Google account.
+- **Currency:** No currency symbol.
 
 ## Tech Stack & Tooling Constraints
 

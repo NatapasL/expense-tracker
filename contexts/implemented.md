@@ -33,5 +33,10 @@
   - Implemented `screens/AddEditExpenseScreen.svelte` with large amount input, category grid picker, date picker, and description field. Handles both add (POST) and edit (PUT) modes.
   - Wired up routes: `routes/expense/new/+page.svelte`, `routes/expense/[id]/+page.svelte`, `routes/expense/[id]/edit/+page.svelte`.
   - Disabled `svelte/no-goto-without-base` ESLint rule in `eslint.config.js` since base path is manually handled.
-- [ ] **Step 9: Summary & Analytics Screen**
+- [x] **Step 9: Summary & Analytics Screen**
+  - Implemented `screens/SummaryScreen.svelte` with monthly metrics (total spent, daily average).
+  - Built reactive category breakdown with progress bars and weekly spending charts.
+  - Added bottom navigation bar in `screens/LayoutScreen.svelte` for quick access to Home and Summary.
+  - Set global currency symbol to `฿` in `libs/constants.ts`.
+  - Created route `routes/summary/+page.svelte`.
 - [ ] **Step 10: Category Management**
