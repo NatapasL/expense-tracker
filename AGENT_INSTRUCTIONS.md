@@ -9,7 +9,11 @@
 
 ## App Instruction && Requirement
 
-- contexts/instruction.md
+- agents/contexts/instruction.md
+
+## Agent Commands
+
+When instructed with word `agent-command`, find instruction in`agents/commands` and do as instructed.
 
 ---
 

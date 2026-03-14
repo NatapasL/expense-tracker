@@ -5,6 +5,8 @@ This document provides detailed instructions, constraints, and a step-by-step br
 ## ⚠️ Important Constraint
 
 **After finishing EACH step in the breakdown below, you MUST write the result and mark it as completed in `contexts/implemented.md`. Do not proceed onto multiple steps without updating this file.**
+**Check eslint**
+**If it change frontend code, check is it work as expected**
 
 ## Overview
 
@@ -147,3 +149,9 @@ Execute the following steps one at a time. **Remember to update `contexts/implem
 - Implement screens and routes for creating, listing, updating, and deleting custom categories.
 - Ensure category updates reflect accurately across the application.
 - _Update `contexts/implemented.md`_
+
+# Additional Requirements
+
+## Additional 1
+
+See `contexts/additional_requirement_1.md`
