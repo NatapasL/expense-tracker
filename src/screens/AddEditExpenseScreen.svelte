@@ -7,7 +7,7 @@
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 
 	interface Props {
@@ -96,18 +96,18 @@
 
 		if (isEditing) {
 			await db.items.put(itemData);
-			goto(`${base}/expense/${itemData.id}`);
+			goto(resolve(`/expense/${itemData.id}`));
 		} else {
 			await db.items.add(itemData);
-			goto(`${base}/`);
+			goto(resolve(`/`));
 		}
 	}
 
 	function cancel() {
 		if (isEditing && id) {
-			goto(`${base}/expense/${id}`);
+			goto(resolve(`/expense/${id}`));
 		} else {
-			goto(`${base}/`);
+			goto(resolve(`/`));
 		}
 	}
 

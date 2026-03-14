@@ -5,7 +5,7 @@
 	import Modal from '../components/Modal.svelte';
 	import { db, type Item, type Category } from '../libs/dexie';
 	import { goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 
 	interface Props {
@@ -34,7 +34,7 @@
 		if (!item?.id) return;
 		deleting = true;
 		await db.items.delete(item.id);
-		goto(`${base}/`);
+		goto(resolve(`/`));
 	}
 
 </script>
@@ -42,7 +42,7 @@
 <div class="h-full flex flex-col">
 	<Header title="Expense Detail">
 		{#snippet leftIcon()}
-			<a href="{base}/" aria-label="Back" class="text-discord-text-muted hover:text-white transition-colors p-1">
+			<a href={resolve(`/`)} aria-label="Back" class="text-discord-text-muted hover:text-white transition-colors p-1">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
 				</svg>
@@ -84,7 +84,7 @@
 				<Button
 					variant="secondary"
 					fullWidth
-					onclick={() => goto(`${base}/expense/${item!.id}/edit`)}
+					onclick={() => goto(resolve(`/expense/${item!.id}/edit`) )}
 				>
 					✏️ Edit
 				</Button>

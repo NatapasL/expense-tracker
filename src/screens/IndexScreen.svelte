@@ -4,7 +4,7 @@
 	import { db, type Item, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 
 	let items: Item[] = $state([]);
@@ -98,7 +98,7 @@
 						<div class="space-y-2">
 							{#each group.items as item (item.id)}
 								{@const cat = getCategory(item.category)}
-								<a href="{base}/expense/{item.id}" class="block">
+								<a href={resolve(`/expense/${item.id}`)} class="block">
 									<Card variant="sidebar" padding="none" class="flex items-center gap-3 px-3 py-2 hover:bg-discord-panel transition-colors cursor-pointer">
 										<div class="w-8 h-8 rounded-full flex items-center justify-center text-lg" style="background-color: {cat.color}33; color: {cat.color}">
 											{cat.icon}
@@ -129,7 +129,7 @@
 						</div>
 						<div class="space-y-2">
 							{#each group.items as item (item.id)}
-								<a href="{base}/expense/{item.id}" class="block">
+								<a href={resolve(`/expense/${item.id}`)} class="block">
 									<Card variant="sidebar" padding="none" class="flex items-center gap-3 px-3 py-2 hover:bg-discord-panel transition-colors cursor-pointer">
 										<div class="flex-1 min-w-0">
 											<div class="font-medium text-white truncate text-[15px]">{new Date(item.date).toLocaleDateString()}</div>
@@ -150,7 +150,7 @@
 
 	<!-- FAB -->
 	<div class="fixed bottom-6 right-6 z-50">
-		<a href="{base}/expense/new" aria-label="Add Expense via Link">
+		<a href={resolve(`/expense/new`)} aria-label="Add Expense via Link">
 			<button aria-label="Add Expense" class="w-14 h-14 bg-discord-blurple hover:bg-[#4752C4] text-white rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-discord-bg transition-transform hover:scale-105 active:scale-95">
 				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 				  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
