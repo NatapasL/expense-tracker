@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from '../components/Header.svelte';
 	import Card from '../components/Card.svelte';
-	import Modal from '../components/Modal.svelte';
+	import MonthPicker from '../feature/MonthPicker.svelte';
 	import { db, type Item, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
@@ -13,7 +13,6 @@
 	let groupedBy = $state<'date' | 'category'>('date');
 	let selectedDate = $state(new Date());
 	let showMonthPicker = $state(false);
-	let pickerYear = $state(new Date().getFullYear());
 
 	let startOfMonth = $derived(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString());
 	let endOfMonth = $derived(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999).toISOString());
@@ -76,15 +75,6 @@
 		return categories.find(c => c.id === cid) || { id: 'unknown', name: 'Unknown', color: '#999', icon: '❓' };
 	}
 
-	const months = [
-		'January', 'February', 'March', 'April', 'May', 'June',
-		'July', 'August', 'September', 'October', 'November', 'December'
-	];
-
-	function selectMonth(monthIndex: number) {
-		selectedDate = new Date(pickerYear, monthIndex, 1);
-		showMonthPicker = false;
-	}
 
 </script>
 
@@ -93,7 +83,6 @@
 		title={monthLabel} 
 		clickable={true} 
 		onclick={() => {
-			pickerYear = selectedDate.getFullYear();
 			showMonthPicker = true;
 		}} 
 	/>
@@ -185,48 +174,6 @@
 		</a>
 	</div>
 
-	<!-- Month Picker Modal -->
-	<Modal open={showMonthPicker} onclose={() => showMonthPicker = false} title="Select Month">
-		<div class="space-y-4">
-			<div class="flex items-center justify-between bg-discord-sidebar p-2 rounded-md">
-				<button 
-					class="p-1 hover:bg-white/10 rounded transition-colors text-white"
-					onclick={() => pickerYear--}
-					aria-label="Previous Year"
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-				</button>
-				<span class="font-bold text-white text-lg">{pickerYear}</span>
-				<button 
-					class="p-1 hover:bg-white/10 rounded transition-colors text-white"
-					onclick={() => pickerYear++}
-					aria-label="Next Year"
-				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-				</button>
-			</div>
-
-			<div class="grid grid-cols-3 gap-2">
-				{#each months as month, i (month)}
-					{@const isSelected = i === selectedDate.getMonth() && pickerYear === selectedDate.getFullYear()}
-					<button 
-						class="py-3 px-2 rounded-md text-sm font-medium transition-colors {isSelected ? 'bg-discord-blurple text-white' : 'bg-discord-sidebar text-discord-text-normal hover:bg-discord-sidebar-hover hover:text-white'}"
-						onclick={() => selectMonth(i)}
-					>
-						{month.substring(0, 3)}
-					</button>
-				{/each}
-			</div>
-
-			<button 
-				class="w-full py-2 bg-discord-sidebar text-discord-text-muted hover:text-white transition-colors text-sm font-medium rounded-md"
-				onclick={() => {
-					pickerYear = new Date().getFullYear();
-					selectMonth(new Date().getMonth());
-				}}
-			>
-				Jump to Current Month
-			</button>
-		</div>
-	</Modal>
+	<!-- Month Picker Feature -->
+	<MonthPicker bind:value={selectedDate} bind:open={showMonthPicker} />
 </div>

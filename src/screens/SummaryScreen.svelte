@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Header from '../components/Header.svelte';
 	import Card from '../components/Card.svelte';
+	import MonthPicker from '../feature/MonthPicker.svelte';
 	import { db, type Item, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
@@ -10,29 +11,35 @@
 
 	let items: Item[] = $state([]);
 	let categories: Category[] = $state([]);
+	let selectedDate = $state(new Date());
+	let showMonthPicker = $state(false);
 
-	const now = new Date();
-	const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-	const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).toISOString();
+	let startOfMonth = $derived(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString());
+	let endOfMonth = $derived(new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0, 23, 59, 59, 999).toISOString());
+	let monthLabel = $derived(selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
 
-	const itemsObservable = liveQuery(
-		() => db.items.where('date').between(startOfMonth, endOfMonth).toArray()
-	);
+	$effect(() => {
+		const start = startOfMonth;
+		const end = endOfMonth;
+		
+		const itemsObservable = liveQuery(
+			() => db.items.where('date').between(start, end).toArray()
+		);
+		const itemsSub = itemsObservable.subscribe(val => {
+			items = val || [];
+		});
+		return () => itemsSub.unsubscribe();
+	});
 
 	const categoriesObservable = liveQuery(
 		() => db.categories.toArray()
 	);
-
-	const itemsSub = itemsObservable.subscribe(val => {
-		items = val || [];
-	});
 
 	const catSub = categoriesObservable.subscribe(val => {
 		categories = val || [];
 	});
 
 	onDestroy(() => {
-		itemsSub.unsubscribe();
 		catSub.unsubscribe();
 	});
 
@@ -43,10 +50,10 @@
 		if (items.length === 0) return 0;
 		const today = new Date();
 		let days;
-		if (today.getMonth() === now.getMonth() && today.getFullYear() === now.getFullYear()) {
+		if (today.getMonth() === selectedDate.getMonth() && today.getFullYear() === selectedDate.getFullYear()) {
 			days = today.getDate(); // Use days passed if current month
 		} else {
-			days = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); // Total days if past month
+			days = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate(); // Total days if past month
 		}
 		return totalSpent / (days || 1);
 	});
@@ -70,17 +77,19 @@
 
 	let weeklyTotals = $derived.by(() => {
 		const groups: { label: string; total: number }[] = [];
-		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-		const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+		const monthStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
+		const monthEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
 		const totalDays = monthEnd.getDate();
+		const today = new Date();
+		const isCurrentMonth = today.getMonth() === selectedDate.getMonth() && today.getFullYear() === selectedDate.getFullYear();
 
 		for (let i = 0; i < 5; i++) {
 			const start = i * 7 + 1;
 			if (start > totalDays) break;
 			const end = Math.min((i + 1) * 7, totalDays);
 			
-			const monthLabel = monthStart.toLocaleDateString('en-US', { month: 'short' });
-			const label = `${monthLabel} ${start}-${end}`;
+			const monthName = monthStart.toLocaleDateString('en-US', { month: 'short' });
+			const label = `${monthName} ${start}-${end}`;
 			
 			const total = items.reduce((sum, item) => {
 				const itemDate = new Date(item.date);
@@ -88,7 +97,7 @@
 				return (day >= start && day <= end) ? sum + item.amount : sum;
 			}, 0);
 
-			if (total > 0 || start <= now.getDate()) {
+			if (total > 0 || (isCurrentMonth && start <= today.getDate())) {
 				groups.push({ label, total });
 			}
 		}
@@ -96,6 +105,7 @@
 	});
 
 	let maxWeeklyTotal = $derived(Math.max(...weeklyTotals.map(w => w.total), 0));
+
 
 </script>
 
@@ -112,8 +122,15 @@
 	</button>
 {/snippet}
 
-<div class="h-full flex flex-col">
-	<Header title="Monthly Summary" {rightIcon} />
+<div class="h-full flex flex-col relative">
+	<Header 
+		title={monthLabel} 
+		{rightIcon} 
+		clickable={true} 
+		onclick={() => {
+			showMonthPicker = true;
+		}}
+	/>
 
 	<div class="flex-1 overflow-y-auto p-3 space-y-4 pb-10">
 		<!-- Summary Cards -->
@@ -175,4 +192,7 @@
 			</Card>
 		</section>
 	</div>
+
+	<!-- Month Picker Feature -->
+	<MonthPicker bind:value={selectedDate} bind:open={showMonthPicker} />
 </div>

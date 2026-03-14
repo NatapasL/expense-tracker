@@ -53,3 +53,13 @@
   - Added Month Selection Modal to allow browsing expenses by month/year.
   - Updated DB query to reactfully filter expenses based on the selected month.
   - Verified total calculations and list updates correctly.
+
+- [x] **Step 2: Month Selection on Summary Page**
+  - Implemented month selection on the Summary page similar to the Index page.
+  - Updated all analytics (Total Spent, Daily Average, Category Breakdown, Weekly Totals) to reflect the selected month.
+  - Verified UI interactions and data reactivity in the browser.
+
+- [x] **Refactoring: Reusable Month Picker Feature**
+  - Extracted common month selection logic and logic from `IndexScreen.svelte` and `SummaryScreen.svelte` into `src/feature/MonthPicker.svelte`.
+  - Simplified state management and UI code in both screens by using the new component.
+  - Verified consistent behavior across the application.
