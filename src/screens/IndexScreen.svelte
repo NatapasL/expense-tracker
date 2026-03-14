@@ -9,11 +9,12 @@
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 	import { syncToGoogleSheets } from '../libs/sync';
 	import { formatCurrency, formatDateLong } from '../libs/utils';
+	import { settings } from '../libs/settings.svelte.ts';
+
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
 	let groupedBy = $state<'date' | 'category'>('date');
-	let selectedDate = $state(new Date());
 	let showMonthPicker = $state(false);
 	let syncing = $state(false);
 
@@ -31,12 +32,12 @@
 	}
 
 	let startOfMonth = $derived(
-		new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString()
+		new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth(), 1).toISOString()
 	);
 	let endOfMonth = $derived(
 		new Date(
-			selectedDate.getFullYear(),
-			selectedDate.getMonth() + 1,
+			settings.selectedDate.getFullYear(),
+			settings.selectedDate.getMonth() + 1,
 			0,
 			23,
 			59,
@@ -45,8 +46,9 @@
 		).toISOString()
 	);
 	let monthLabel = $derived(
-		selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+		settings.selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 	);
+
 
 	$effect(() => {
 		// Access derived values here to ensure Svelte 5 tracks them as dependencies for this effect
@@ -281,5 +283,5 @@
 	</div>
 
 	<!-- Month Picker Feature -->
-	<MonthPicker bind:value={selectedDate} bind:open={showMonthPicker} />
+	<MonthPicker bind:value={settings.selectedDate} bind:open={showMonthPicker} />
 </div>

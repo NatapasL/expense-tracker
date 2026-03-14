@@ -10,10 +10,11 @@
 	import { goto } from '$app/navigation';
 	import { syncToGoogleSheets } from '../libs/sync';
 	import { formatCurrency } from '../libs/utils';
+	import { settings } from '../libs/settings.svelte.ts';
+
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
-	let selectedDate = $state(new Date());
 	let showMonthPicker = $state(false);
 	let syncing = $state(false);
 
@@ -31,12 +32,12 @@
 	}
 
 	let startOfMonth = $derived(
-		new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString()
+		new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth(), 1).toISOString()
 	);
 	let endOfMonth = $derived(
 		new Date(
-			selectedDate.getFullYear(),
-			selectedDate.getMonth() + 1,
+			settings.selectedDate.getFullYear(),
+			settings.selectedDate.getMonth() + 1,
 			0,
 			23,
 			59,
@@ -45,8 +46,9 @@
 		).toISOString()
 	);
 	let monthLabel = $derived(
-		selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+		settings.selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 	);
+
 
 	$effect(() => {
 		const start = startOfMonth;
@@ -79,13 +81,14 @@
 		const today = new Date();
 		let days;
 		if (
-			today.getMonth() === selectedDate.getMonth() &&
-			today.getFullYear() === selectedDate.getFullYear()
+			today.getMonth() === settings.selectedDate.getMonth() &&
+			today.getFullYear() === settings.selectedDate.getFullYear()
 		) {
 			days = today.getDate(); // Use days passed if current month
 		} else {
-			days = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0).getDate(); // Total days if past month
+			days = new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth() + 1, 0).getDate(); // Total days if past month
 		}
+
 		return totalSpent / (days || 1);
 	});
 
@@ -108,13 +111,14 @@
 
 	let weeklyTotals = $derived.by(() => {
 		const groups: { label: string; total: number }[] = [];
-		const monthStart = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-		const monthEnd = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+		const monthStart = new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth(), 1);
+		const monthEnd = new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth() + 1, 0);
 		const totalDays = monthEnd.getDate();
 		const today = new Date();
 		const isCurrentMonth =
-			today.getMonth() === selectedDate.getMonth() &&
-			today.getFullYear() === selectedDate.getFullYear();
+			today.getMonth() === settings.selectedDate.getMonth() &&
+			today.getFullYear() === settings.selectedDate.getFullYear();
+
 
 		for (let i = 0; i < 5; i++) {
 			const start = i * 7 + 1;
@@ -300,5 +304,5 @@
 	</div>
 
 	<!-- Month Picker Feature -->
-	<MonthPicker bind:value={selectedDate} bind:open={showMonthPicker} />
+	<MonthPicker bind:value={settings.selectedDate} bind:open={showMonthPicker} />
 </div>
