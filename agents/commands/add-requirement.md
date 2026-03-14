@@ -7,6 +7,7 @@
 3. Add detailed instruction into the created file, based on the `agents/requirements/additional-requirement-*.md` file
 
 - At top of file, add the instruction to read the `agents/contexts/instruction.md` first
+- Add "Important" section with instruction to do only single step at a time and update `agents/contexts/implemented.md` after finishing each step
 - Break down the requirement into smaller actionable steps
 - If it the constraint that change the way of working, add it into `agents/contexts/instruction.md` file
 
