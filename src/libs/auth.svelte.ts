@@ -1,4 +1,4 @@
-/// <reference types="vite/client" />
+import { PUBLIC_VITE_GOOGLE_CLIENT_ID } from '$env/static/public';
 
 declare global {
 	interface Window {
@@ -57,7 +57,7 @@ class AuthState {
 
 	private setupClient() {
 		this.tokenClient = window.google.accounts.oauth2.initTokenClient({
-			client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+			client_id: PUBLIC_VITE_GOOGLE_CLIENT_ID,
 			scope:
 				'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
