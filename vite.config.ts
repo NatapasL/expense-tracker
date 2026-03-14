@@ -27,6 +27,16 @@ export default defineConfig({
 						type: 'image/png'
 					}
 				]
+			},
+			workbox: {
+				globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+				clientsClaim: true,
+				skipWaiting: true
+			},
+			devOptions: {
+				enabled: true,
+				suppressWarnings: true,
+				type: 'module'
 			}
 		})
 	]
