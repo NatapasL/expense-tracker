@@ -35,7 +35,7 @@ jobs:
         run: pnpm build
         env:
           PUBLIC_VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
-          BASE_PATH: ${{ env.BASE_PATH }}
+          BASE_PATH: ${{ secrets.BASE_PATH }}
           NODE_ENV: production
 
       - name: Upload Artifacts
