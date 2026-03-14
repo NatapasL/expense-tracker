@@ -34,7 +34,7 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          PUBLIC_VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          PUBLIC_VITE_GOOGLE_CLIENT_ID: ${{ env.VITE_GOOGLE_CLIENT_ID }}
           BASE_PATH: ${{ env.BASE_PATH }}
           NODE_ENV: production
 
