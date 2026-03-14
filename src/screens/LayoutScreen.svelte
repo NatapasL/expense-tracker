@@ -5,12 +5,12 @@
 
 	let { children }: { children: Snippet } = $props();
 
-	let currentPath = $derived($page.url.pathname);
+	const isLoginRoute = $derived($page.route.id === '/login');
 </script>
 
 <div class="h-full min-h-screen bg-gray-900 text-gray-100">
 	<main
-		class="relative min-h-screen w-full max-w-md p-4 {currentPath === '/login'
+		class="relative min-h-screen w-full max-w-md p-4 {isLoginRoute
 			? 'pb-4'
 			: 'pb-24'} mx-auto flex flex-col border-x border-gray-800 bg-gray-900"
 	>
@@ -19,13 +19,13 @@
 		</div>
 
 		<!-- Bottom Nav -->
-		{#if currentPath !== '/login'}
+		{#if !isLoginRoute}
 			<nav
 				class="fixed bottom-0 left-1/2 z-40 flex h-16 w-full max-w-md -translate-x-1/2 items-center justify-around border-t border-black/20 bg-discord-panel px-6"
 			>
 				<a
 					href={resolve('/')}
-					class="flex flex-col items-center gap-1 transition-colors {currentPath === '/'
+					class="flex flex-col items-center gap-1 transition-colors {$page.route.id === '/'
 						? 'text-white'
 						: 'text-discord-text-muted hover:text-discord-text-normal'}"
 				>
@@ -40,11 +40,6 @@
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 solid 1px black h4a1 solid 1px black v-4a1 solid 1px black h4v4a1 solid 1px black h4V10M9 21h6"
-						/>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
 							d="M3 12l9-9 9 9M5 10v10a2 2 0 002 2h3a2 2 0 002-2v-4a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 002 2h3a2 2 0 002-2V10"
 						/>
 					</svg>
@@ -53,7 +48,7 @@
 
 				<a
 					href={resolve('/summary')}
-					class="flex flex-col items-center gap-1 transition-colors {currentPath === '/summary'
+					class="flex flex-col items-center gap-1 transition-colors {$page.route.id === '/summary'
 						? 'text-white'
 						: 'text-discord-text-muted hover:text-discord-text-normal'}"
 				>

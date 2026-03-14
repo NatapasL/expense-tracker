@@ -4,7 +4,7 @@
 	import { auth } from '../libs/auth.svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	import { resolve, base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
@@ -15,13 +15,12 @@
 
 	$effect(() => {
 		if (auth.isInitialized) {
-			const currentPath = $page.url.pathname as string;
-			const loginPath = base + '/login';
+			const isLoginRoute = $page.route.id === '/login';
 			
-			if (!auth.isAuthenticated && currentPath !== loginPath) {
-				goto(resolve('/login')).catch(console.error);
-			} else if (auth.isAuthenticated && currentPath === loginPath) {
-				goto(resolve('/')).catch(console.error);
+			if (!auth.isAuthenticated && !isLoginRoute) {
+				goto(resolve('/login'), { replaceState: true }).catch(console.error);
+			} else if (auth.isAuthenticated && isLoginRoute) {
+				goto(resolve('/'), { replaceState: true }).catch(console.error);
 			}
 		}
 	});
