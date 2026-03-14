@@ -5,6 +5,9 @@ export interface Category {
 	name: string;
 	color: string; // hex or theme color
 	icon: string; // emoji icon
+	synced: number; // 0 for no, 1 for yes
+	deleted: number; // 0 for no, 1 for yes
+	updatedAt: number; // timestamp
 }
 
 export interface Expense {
@@ -13,6 +16,9 @@ export interface Expense {
 	category: string; // reference to Category.id
 	date: string; // ISO string
 	description: string;
+	synced: number; // 0 for no, 1 for yes
+	deleted: number; // 0 for no, 1 for yes
+	updatedAt: number; // timestamp
 }
 
 const db = new Dexie('MoneyTrackerDB') as Dexie & {
@@ -21,12 +27,12 @@ const db = new Dexie('MoneyTrackerDB') as Dexie & {
 };
 
 // Schema declaration
-db.version(2).stores({
-	categories: 'id, name',
-	expenses: 'id, category, date'
+db.version(3).stores({
+	categories: 'id, name, synced, deleted, updatedAt',
+	expenses: 'id, category, date, synced, deleted, updatedAt'
 });
 
-const defaultCategories: Category[] = [
+const defaultCategories: (Omit<Category, 'synced' | 'deleted' | 'updatedAt'> & Partial<Category>)[] = [
 	{ id: 'cat-food', name: 'Food', color: '#5865F2', icon: '🍔' },
 	{ id: 'cat-transport', name: 'Transportation', color: '#57F287', icon: '🚗' },
 	{ id: 'cat-edu', name: 'Education', color: '#FEE75C', icon: '📚' },
@@ -42,7 +48,14 @@ const defaultCategories: Category[] = [
 
 // Seed logic
 db.on('populate', async () => {
-	await db.categories.bulkAdd(defaultCategories);
+	const now = Date.now();
+	const categoriesToSeed = defaultCategories.map(c => ({
+		...c,
+		synced: 0,
+		deleted: 0,
+		updatedAt: now
+	})) as Category[];
+	await db.categories.bulkAdd(categoriesToSeed);
 });
 
 export { db };

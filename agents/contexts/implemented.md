@@ -72,3 +72,11 @@
   - Added manual Sync button to `SummaryScreen.svelte` header alongside the category management button.
   - Implemented loading state and error handling for manual sync.
   - Verified UI and functionality in the browser.
+- [x] **Step 5: Enhanced Sync & Soft-Delete Logic**
+  - Updated database schema (v3) with `synced`, `deleted`, and `updatedAt` flags for Expenses and Categories.
+  - Implemented soft-delete for both Expenses (in `ViewExpenseScreen.svelte`) and Categories (in `CategoryListScreen.svelte`).
+  - Updated all analytics and list views to filter out soft-deleted items.
+  - Re-implemented `syncToGoogleSheets` in `libs/sync.ts` as a robust two-way sync process.
+  - Added conflict resolution using `updatedAt` timestamps.
+  - Refined `checkAndRunDailySync` to force a pull for first-time users on a new device.
+  - Fixed TypeScript errors and ensured type safety in sync logic.

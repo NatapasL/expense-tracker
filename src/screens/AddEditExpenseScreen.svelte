@@ -25,7 +25,16 @@
 	let date = $state(new Date().toISOString().split('T')[0]);
 	let description = $state('');
 	let saving = $state(false);
-	let loading = $state(!!id);
+	let loading = $state(true);
+
+	$effect(() => {
+		if (id) {
+			loading = true; // reset to true if id changes
+			// ... existing logic handles loading=false
+		} else {
+			loading = false;
+		}
+	});
 
 	// errors
 	let amountError = $state('');
@@ -90,7 +99,10 @@
 			amount: parseFloat(amount),
 			category: categoryId,
 			date: new Date(date).toISOString(),
-			description: description.trim()
+			description: description.trim(),
+			synced: 0,
+			deleted: 0,
+			updatedAt: Date.now()
 		};
 
 		if (isEditing) {

@@ -13,7 +13,9 @@
 	let isDeleteModalOpen = $state(false);
 	let categoryToDelete: Category | null = $state(null);
 
-	const categoriesObservable = liveQuery(() => db.categories.toArray());
+	const categoriesObservable = liveQuery(() =>
+		db.categories.filter((c) => c.deleted === 0).toArray()
+	);
 	const catSub = categoriesObservable.subscribe((val) => {
 		categories = val || [];
 	});
@@ -36,7 +38,11 @@
 					`Cannot delete category "${categoryToDelete.name}" because it is used by ${count} expense(s). Please reassign them first.`
 				);
 			} else {
-				await db.categories.delete(categoryToDelete.id);
+				await db.categories.update(categoryToDelete.id, {
+					deleted: 1,
+					synced: 0,
+					updatedAt: Date.now()
+				});
 			}
 			isDeleteModalOpen = false;
 			categoryToDelete = null;

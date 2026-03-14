@@ -76,7 +76,10 @@
 			id: isEditing && id ? id : `cat-${Date.now()}`,
 			name: name.trim(),
 			color,
-			icon: icon.trim()
+			icon: icon.trim(),
+			synced: 0,
+			deleted: 0,
+			updatedAt: Date.now()
 		};
 
 		try {

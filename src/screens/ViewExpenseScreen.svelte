@@ -33,7 +33,11 @@
 	async function deleteExpense() {
 		if (!expense?.id) return;
 		deleting = true;
-		await db.expenses.delete(expense.id);
+		await db.expenses.update(expense.id, {
+			deleted: 1,
+			synced: 0,
+			updatedAt: Date.now()
+		});
 		goto(resolve(`/`));
 	}
 </script>

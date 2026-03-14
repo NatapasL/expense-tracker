@@ -52,7 +52,7 @@
 		const end = endOfMonth;
 
 		const expensesObservable = liveQuery(() =>
-			db.expenses.where('date').between(start, end).toArray()
+			db.expenses.where('date').between(start, end).filter((e) => e.deleted === 0).toArray()
 		);
 		const expensesSub = expensesObservable.subscribe((val) => {
 			expenses = val || [];
