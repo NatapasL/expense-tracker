@@ -11,6 +11,7 @@ class AuthState {
 	accessToken = $state<string | null>(null);
 	user = $state<{ name: string; picture: string } | null>(null);
 	isInitialized = $state<boolean>(false);
+	tokenExpiry = $state<number | null>(null);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private tokenClient: any = null;
@@ -33,9 +34,24 @@ class AuthState {
 
 		// Restore from localStorage
 		const savedToken = localStorage.getItem('google_access_token');
-		if (savedToken) {
+		const savedExpiry = localStorage.getItem('google_token_expiry');
+		
+		if (savedToken && savedExpiry) {
 			this.accessToken = savedToken;
-			this.fetchUserInfo();
+			this.tokenExpiry = parseInt(savedExpiry);
+			
+			// If token is expired or about to expire (within 5 mins), refresh it
+			if (Date.now() > this.tokenExpiry - 300000) {
+				console.log('Token expired or near expiry, refreshing...');
+				// We can't call silentRefresh directly yet because setupClient might not have finished
+				// but setupClient is called synchronously above if window.google is ready.
+				// If not, it will be handled in setupClient when it finishes.
+				if (this.isInitialized) {
+					this.silentRefresh();
+				}
+			} else {
+				this.fetchUserInfo();
+			}
 		}
 	}
 
@@ -52,15 +68,30 @@ class AuthState {
 				}
 				this.accessToken = response.access_token;
 				if (this.accessToken) {
+					const expiry = Date.now() + response.expires_in * 1000;
+					this.tokenExpiry = expiry;
 					localStorage.setItem('google_access_token', this.accessToken);
+					localStorage.setItem('google_token_expiry', expiry.toString());
 					this.fetchUserInfo();
 				}
 			}
 		});
 		this.isInitialized = true;
+		
+		// If we had a token but it's expired, refresh now that client is ready
+		if (this.accessToken && this.tokenExpiry && Date.now() > this.tokenExpiry - 300000) {
+			this.silentRefresh();
+		}
 	}
 
-	async fetchUserInfo() {
+	silentRefresh() {
+		if (this.tokenClient) {
+			console.log('Initiating silent refresh...');
+			this.tokenClient.requestAccessToken({ prompt: 'none' });
+		}
+	}
+
+	async fetchUserInfo(retry = true) {
 		if (!this.accessToken) return;
 		try {
 			const res = await fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
@@ -70,8 +101,11 @@ class AuthState {
 			});
 			if (!res.ok) {
 				// Token might be expired
-				if (res.status === 401) {
-					this.logout();
+				if (res.status === 401 && retry) {
+					console.log('User info 401, attempting silent refresh...');
+					this.silentRefresh();
+					// The callback will call fetchUserInfo again upon success
+					return;
 				}
 				throw new Error('Failed to fetch user info');
 			}
@@ -97,7 +131,9 @@ class AuthState {
 		}
 		this.accessToken = null;
 		this.user = null;
+		this.tokenExpiry = null;
 		localStorage.removeItem('google_access_token');
+		localStorage.removeItem('google_token_expiry');
 	}
 
 	get isAuthenticated() {
