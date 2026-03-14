@@ -23,7 +23,7 @@ export async function checkAndRunDailySync() {
 	}
 }
 
-async function syncToGoogleSheets() {
+export async function syncToGoogleSheets() {
 	if (!auth.accessToken) throw new Error('Not authenticated');
 
 	// 1. Find the spreadsheet

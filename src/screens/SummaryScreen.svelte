@@ -8,11 +8,26 @@
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
+	import { syncToGoogleSheets } from '../libs/sync';
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
 	let selectedDate = $state(new Date());
 	let showMonthPicker = $state(false);
+	let syncing = $state(false);
+
+	async function handleSync() {
+		if (syncing) return;
+		syncing = true;
+		try {
+			await syncToGoogleSheets();
+		} catch (error) {
+			console.error('Manual sync failed:', error);
+			alert('Sync failed. Please check your connection and try again.');
+		} finally {
+			syncing = false;
+		}
+	}
 
 	let startOfMonth = $derived(
 		new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString()
@@ -125,32 +140,55 @@
 </script>
 
 {#snippet rightIcon()}
-	<button
-		onclick={() => goto(resolve('/categories'))}
-		class="p-1 text-discord-text-muted transition-colors hover:text-white"
-		aria-label="Manage Categories"
-	>
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			class="h-6 w-6"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
+	<div class="flex items-center gap-1">
+		<button
+			onclick={handleSync}
+			disabled={syncing}
+			class="p-1 text-discord-text-muted transition-colors hover:text-white disabled:opacity-50"
+			aria-label="Sync now"
 		>
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-			/>
-			<path
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-				d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-			/>
-		</svg>
-	</button>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-5 w-5 {syncing ? 'animate-spin' : ''}"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+				/>
+			</svg>
+		</button>
+		<button
+			onclick={() => goto(resolve('/categories'))}
+			class="p-1 text-discord-text-muted transition-colors hover:text-white"
+			aria-label="Manage Categories"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-6 w-6"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+				/>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+				/>
+			</svg>
+		</button>
+	</div>
 {/snippet}
 
 <div class="relative flex h-full flex-col">

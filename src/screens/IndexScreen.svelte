@@ -7,12 +7,27 @@
 	import { onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
+	import { syncToGoogleSheets } from '../libs/sync';
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
 	let groupedBy = $state<'date' | 'category'>('date');
 	let selectedDate = $state(new Date());
 	let showMonthPicker = $state(false);
+	let syncing = $state(false);
+
+	async function handleSync() {
+		if (syncing) return;
+		syncing = true;
+		try {
+			await syncToGoogleSheets();
+		} catch (error) {
+			console.error('Manual sync failed:', error);
+			alert('Sync failed. Please check your connection and try again.');
+		} finally {
+			syncing = false;
+		}
+	}
 
 	let startOfMonth = $derived(
 		new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1).toISOString()
@@ -98,9 +113,34 @@
 	}
 </script>
 
+{#snippet rightIcon()}
+	<button
+		onclick={handleSync}
+		disabled={syncing}
+		class="p-1 text-discord-text-muted transition-colors hover:text-white disabled:opacity-50"
+		aria-label="Sync now"
+	>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			class="h-5 w-5 {syncing ? 'animate-spin' : ''}"
+			fill="none"
+			viewBox="0 0 24 24"
+			stroke="currentColor"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+			/>
+		</svg>
+	</button>
+{/snippet}
+
 <div class="relative flex h-full flex-col pb-20">
 	<Header
 		title={monthLabel}
+		{rightIcon}
 		clickable={true}
 		onclick={() => {
 			showMonthPicker = true;

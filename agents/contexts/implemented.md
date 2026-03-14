@@ -65,3 +65,10 @@
   - Updated app branding and display name to "Chiisa" in PWA manifest and UI.
   - Configured Google Sheets sync to use `expense_tracker` as the file name and `Expenses` as the sheet name.
   - Verified all references and functionality across all screens.
+
+- [x] **Step 4: Sync Button Implementation**
+  - Exported `syncToGoogleSheets` from `libs/sync.ts`.
+  - Added manual Sync button to `IndexScreen.svelte` header.
+  - Added manual Sync button to `SummaryScreen.svelte` header alongside the category management button.
+  - Implemented loading state and error handling for manual sync.
+  - Verified UI and functionality in the browser.
