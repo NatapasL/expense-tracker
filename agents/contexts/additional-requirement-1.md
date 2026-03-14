@@ -46,5 +46,6 @@ This document breaks down the implementation of additional features and logic ch
   - Upload all unsynced local data to Google Sheets.
   - Update the `synced` flag for uploaded items.
   - Download any remote updates to keep local data in sync.
+- **Sync Button** Use same sync logic from daily sync
 - **Soft Delete:** Implement a soft-delete approach for Google Sheets. Expenses marked as deleted in the sheet should not be physically removed.
 - _Update `agents/contexts/implemented.md`_
