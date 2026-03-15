@@ -6,8 +6,8 @@
 
 	let { children }: { children: Snippet } = $props();
 
-	// Show navigation only if authenticated
-	const showNav = $derived(auth.isAuthenticated);
+	// Show navigation only if authenticated or has local data
+	const showNav = $derived(auth.isAuthenticated || auth.hasLocalData);
 </script>
 
 <div class="h-full min-h-screen bg-gray-900 text-gray-100">
