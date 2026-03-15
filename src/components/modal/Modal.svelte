@@ -2,6 +2,16 @@
 	import { fade, fly } from 'svelte/transition';
 	import { Card } from '../card';
 	import type { ModalProps } from './types';
+	import {
+		backdropStyle,
+		containerStyle,
+		cardContentStyle,
+		headerStyle,
+		titleStyle,
+		closeButtonStyle,
+		bodyStyle,
+		footerStyle
+	} from './styles';
 
 	let { open, onclose, title, children, footer, closeOnBackdrop = true }: ModalProps = $props();
 
@@ -14,25 +24,18 @@
 
 {#if open}
 	<div
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+		class={backdropStyle}
 		transition:fade={{ duration: 150 }}
 		onclick={handleBackdropClick}
 		role="dialog"
 		aria-modal="true"
 	>
-		<div transition:fly={{ y: 20, duration: 150 }} class="w-full max-w-md">
-			<Card
-				padding="none"
-				class="flex max-h-[90vh] flex-col overflow-hidden bg-discord-bg"
-			>
+		<div transition:fly={{ y: 20, duration: 150 }} class={containerStyle}>
+			<Card padding="none" class={cardContentStyle}>
 				{#if title}
-					<div class="flex shrink-0 items-center justify-between border-b border-black/20 p-4">
-						<h2 class="text-xl font-bold text-white">{title}</h2>
-						<button
-							class="text-discord-text-muted transition-colors hover:text-white focus:outline-none"
-							onclick={onclose}
-							aria-label="Close"
-						>
+					<div class={headerStyle}>
+						<h2 class={titleStyle}>{title}</h2>
+						<button class={closeButtonStyle} onclick={onclose} aria-label="Close">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="24"
@@ -50,14 +53,12 @@
 					</div>
 				{/if}
 
-				<div class="overflow-y-auto p-4">
+				<div class={bodyStyle}>
 					{@render children?.()}
 				</div>
 
 				{#if footer}
-					<div
-						class="flex shrink-0 justify-end gap-2 border-t border-black/20 bg-discord-sidebar p-4"
-					>
+					<div class={footerStyle}>
 						{@render footer()}
 					</div>
 				{/if}

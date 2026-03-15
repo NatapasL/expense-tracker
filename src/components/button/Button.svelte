@@ -10,19 +10,7 @@
 		...rest
 	}: ButtonProps = $props();
 
-	let variantClasses = $derived.by(() => {
-		switch (variant) {
-			case 'primary':
-				return variantStyle.primary;
-			case 'secondary':
-				return variantStyle.secondary;
-			case 'danger':
-				return variantStyle.danger;
-			default:
-				return '';
-		}
-	});
-
+	let variantClasses = $derived(variantStyle[variant]);
 	let widthClass = $derived(fullWidth ? 'w-full' : '');
 </script>
 

@@ -1,33 +1,37 @@
 <script lang="ts">
 	import type { HeaderProps } from './types';
+	import {
+		headerStyle,
+		iconContainerLeftStyle,
+		iconContainerRightStyle,
+		titleContainerStyle,
+		buttonTitleStyle,
+		textTitleStyle,
+		dropdownArrowStyle
+	} from './styles';
 
 	let { title, leftIcon, rightIcon, onclick, clickable = false }: HeaderProps = $props();
 </script>
 
-<header
-	class="sticky top-0 z-30 flex h-10 items-center border-b border-black/20 bg-discord-sidebar px-4"
->
-	<div class="flex w-10 flex-shrink-0 items-center justify-start">
+<header class={headerStyle}>
+	<div class={iconContainerLeftStyle}>
 		{@render leftIcon?.()}
 	</div>
 
-	<div class="flex min-w-0 flex-1 justify-center">
+	<div class={titleContainerStyle}>
 		{#if clickable}
-			<button
-				class="truncate rounded px-2 text-[15px] font-bold text-white transition-colors hover:bg-white/5"
-				{onclick}
-			>
+			<button class={buttonTitleStyle} {onclick}>
 				{title}
-				<span class="ml-1 text-[10px] opacity-50">▼</span>
+				<span class={dropdownArrowStyle}>▼</span>
 			</button>
 		{:else}
-			<h1 class="truncate px-2 text-[15px] font-bold text-white">
+			<h1 class={textTitleStyle}>
 				{title}
 			</h1>
 		{/if}
 	</div>
 
-	<div class="flex w-10 flex-shrink-0 items-center justify-end">
+	<div class={iconContainerRightStyle}>
 		{@render rightIcon?.()}
 	</div>
 </header>
