@@ -1,13 +1,5 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
-
-	interface Props extends HTMLAttributes<HTMLDivElement> {
-		children?: Snippet;
-		class?: string;
-		padding?: 'none' | 'sm' | 'md' | 'lg';
-		variant?: 'panel' | 'sidebar';
-	}
+	import type { CardProps } from './types';
 
 	let {
 		children,
@@ -15,7 +7,7 @@
 		padding = 'md',
 		variant = 'panel',
 		...rest
-	}: Props = $props();
+	}: CardProps = $props();
 
 	let paddingClasses = $derived.by(() => {
 		switch (padding) {

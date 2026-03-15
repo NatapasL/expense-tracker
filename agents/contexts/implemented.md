@@ -116,4 +116,8 @@
     - Created `src/components/button/` directory.
     - Split into `Button.svelte`, `types.ts`, and `index.ts`.
     - Updated all import references in screens.
+  - [x] Refactored `Card` component:
+    - Created `src/components/card/` directory.
+    - Split into `Card.svelte`, `types.ts`, and `index.ts`.
+    - Updated all import references in components and screens.
 

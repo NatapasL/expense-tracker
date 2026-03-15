@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '../components/Header.svelte';
-	import Card from '../components/Card.svelte';
+	import { Card } from '../components/card';
 	import { Button } from '../components/button';
 	import Modal from '../components/Modal.svelte';
 	import { db, type Category } from '../libs/dexie';

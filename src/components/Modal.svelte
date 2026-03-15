@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	import Card from './Card.svelte';
+	import { Card } from './card';
 
 	interface Props {
 		open: boolean;

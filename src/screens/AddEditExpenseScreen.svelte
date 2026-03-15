@@ -2,7 +2,7 @@
 	import Header from '../components/Header.svelte';
 	import { Button } from '../components/button';
 	import Input from '../components/Input.svelte';
-	import Card from '../components/Card.svelte';
+	import { Card } from '../components/card';
 	import { db, type Expense, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';

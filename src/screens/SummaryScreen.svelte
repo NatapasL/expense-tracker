@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '../components/Header.svelte';
-	import Card from '../components/Card.svelte';
+	import { Card } from '../components/card';
 	import MonthPicker from '../feature/MonthPicker.svelte';
 	import { db, type Expense, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
