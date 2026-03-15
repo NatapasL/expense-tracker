@@ -7,12 +7,9 @@
 	import { resolve } from '$app/paths';
 	import { discordColors } from './constants';
 	import { styles } from './styles';
+	import type { AddEditCategoryScreenProps } from './types';
 
-	interface Props {
-		id?: string;
-	}
-
-	let { id }: Props = $props();
+	let { id }: AddEditCategoryScreenProps = $props();
 	let isEditing = $derived(!!id);
 
 	let name = $state('');
