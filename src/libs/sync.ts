@@ -1,16 +1,22 @@
+import {
+	batchUpdateSheet,
+	createSpreadsheet,
+	fetchSpreadsheetData,
+	searchDrive,
+	updateSheetRange
+} from '@/services/google-apis.service';
 import { auth } from './auth.svelte';
 import { db, type Expense, type Category } from './dexie';
 import type { Table, InsertType } from 'dexie';
 
 const SYNC_FILE_NAME = 'expense_tracker';
 
-
 export async function syncToGoogleSheets(forcePull = false) {
 	if (!auth.accessToken) throw new Error('Not authenticated');
 
 	let spreadsheetId = await findSpreadsheetId();
 	if (!spreadsheetId) {
-		spreadsheetId = await createSpreadsheet();
+		spreadsheetId = await createSpreadsheet(SYNC_FILE_NAME);
 	}
 	if (!spreadsheetId) throw new Error('Could not get or create spreadsheet ID');
 
@@ -23,7 +29,15 @@ export async function syncToGoogleSheets(forcePull = false) {
 		db.categories,
 		sheetData.categories,
 		['ID', 'Name', 'Color', 'Icon', 'Synced', 'Deleted', 'UpdatedAt'],
-		(c: Category) => [c.id, c.name, c.color, c.icon, '1', (c.deleted ?? 0).toString(), (c.updatedAt ?? Date.now()).toString()],
+		(c: Category) => [
+			c.id,
+			c.name,
+			c.color,
+			c.icon,
+			'1',
+			(c.deleted ?? 0).toString(),
+			(c.updatedAt ?? Date.now()).toString()
+		],
 		(row: string[]) => ({
 			id: row[0],
 			name: row[1],
@@ -70,7 +84,9 @@ export async function syncToGoogleSheets(forcePull = false) {
 	);
 }
 
-async function syncEntityGroup<T extends { id: string; synced: number; updatedAt: number; deleted: number }>(
+async function syncEntityGroup<
+	T extends { id: string; synced: number; updatedAt: number; deleted: number }
+>(
 	tableName: string,
 	table: Table<T, string, InsertType<T, 'id'>>,
 	sheetRows: string[][],
@@ -175,101 +191,12 @@ async function syncEntityGroup<T extends { id: string; synced: number; updatedAt
 	}
 }
 
-async function fetchSpreadsheetData(spreadsheetId: string) {
-	const res = await fetch(
-		`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchGet?ranges=Expenses!A1:Z1000&ranges=Categories!A1:Z100`,
-		{
-			headers: { Authorization: `Bearer ${auth.accessToken}` }
-		}
-	);
-	if (!res.ok) throw new Error('Failed to fetch spreadsheet data');
-	const data = await res.json();
-	return {
-		expenses: data.valueRanges[0].values || [],
-		categories: data.valueRanges[1].values || []
-	};
-}
-
-async function updateSheetRange(spreadsheetId: string, range: string, values: string[][]) {
-	const res = await fetch(
-		`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?valueInputOption=USER_ENTERED`,
-		{
-			method: 'PUT',
-			headers: {
-				Authorization: `Bearer ${auth.accessToken}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ values })
-		}
-	);
-	if (!res.ok) {
-		const err = await res.text();
-		throw new Error(`Failed to update sheet: ${err}`);
-	}
-}
-
-async function batchUpdateSheet(spreadsheetId: string, data: { range: string; values: string[][] }[]) {
-	const res = await fetch(
-		`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values:batchUpdate`,
-		{
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${auth.accessToken}`,
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				valueInputOption: 'USER_ENTERED',
-				data
-			})
-		}
-	);
-	if (!res.ok) {
-		const err = await res.text();
-		throw new Error(`Failed to batch update sheet: ${err}`);
-	}
-}
-
 async function findSpreadsheetId(): Promise<string | null> {
 	if (!auth.accessToken) return null;
-	const q = encodeURIComponent(
-		`name='${SYNC_FILE_NAME}' and mimeType='application/vnd.google-apps.spreadsheet' and trashed=false`
-	);
-	const res = await fetch(
-		`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`,
-		{
-			headers: {
-				Authorization: `Bearer ${auth.accessToken}`
-			}
-		}
-	);
 
-	if (!res.ok) throw new Error('Failed to search Drive');
-
-	const data = await res.json();
+	const data = await searchDrive(SYNC_FILE_NAME);
 	if (data.files && data.files.length > 0) {
 		return data.files[0].id;
 	}
 	return null;
-}
-
-async function createSpreadsheet(): Promise<string | null> {
-	if (!auth.accessToken) return null;
-	const res = await fetch('https://sheets.googleapis.com/v4/spreadsheets', {
-		method: 'POST',
-		headers: {
-			Authorization: `Bearer ${auth.accessToken}`,
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			properties: {
-				title: SYNC_FILE_NAME
-			},
-			sheets: [{ properties: { title: 'Expenses' } }, { properties: { title: 'Categories' } }]
-		})
-	});
-
-	if (!res.ok) throw new Error('Failed to create spreadsheet');
-
-	const data = await res.json();
-	return data.spreadsheetId;
 }
