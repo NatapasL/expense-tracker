@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AddEditCategoryScreen from '../../../screens/AddEditCategoryScreen.svelte';
+	import { AddEditCategoryScreen } from '../../../screens/add-edit-category';
 </script>
 
 <AddEditCategoryScreen />

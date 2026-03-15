@@ -115,3 +115,10 @@
   - Refactored `Button`, `Card`, `Header`, `Input`, and `Modal`.
   - Updated all import references in screens and features.
   - Verified with `npx eslint .` and `npm run check`.
+
+- [x] **Step 6: Refactor AddEditCategoryScreen**
+  - Refactored `AddEditCategoryScreen.svelte` into `src/screens/add-edit-category/` folder-based structure.
+  - Created `styles.ts`, `constants.ts`, and `index.ts` to organize component logic and styles.
+  - Ensured `styles.ts` follows the project convention of named exports ending in `Style`.
+  - Updated category creation and edit routes to use the new folder-based structure.
+  - Verified with `npm run check`.

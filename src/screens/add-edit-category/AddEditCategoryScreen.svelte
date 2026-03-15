@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { Header } from '../components/header';
-	import { Button } from '../components/button';
-	import { Input } from '../components/input';
-	import { db, type Category } from '../libs/dexie';
+	import { Header } from '../../components/header';
+	import { Button } from '../../components/button';
+	import { Input } from '../../components/input';
+	import { db, type Category } from '../../libs/dexie';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
+	import { discordColors } from './constants';
+	import * as styles from './styles';
 
 	interface Props {
 		id?: string;
@@ -22,24 +24,9 @@
 	let nameError = $state('');
 	let iconError = $state('');
 
-	const discordColors = [
-		'#5865F2', // Blurple
-		'#57F287', // Green
-		'#FEE75C', // Yellow
-		'#EB459E', // Fuchsia
-		'#ED4245', // Red
-		'#1ABC9C', // Aqua
-		'#3498DB', // Blue
-		'#9B59B6', // Purple
-		'#E67E22', // Orange
-		'#E74C3C', // Alizarin
-		'#95A5A6', // Grey
-		'#4F545C' // Dark Grey
-	];
-
 	$effect(() => {
 		if (id) {
-			db.categories.get(id).then((cat) => {
+			db.categories.get(id).then((cat: Category | undefined) => {
 				if (cat) {
 					name = cat.name;
 					color = cat.color;
@@ -116,7 +103,7 @@
 	}
 </script>
 
-<div class="flex h-full flex-col">
+<div class={styles.containerStyle}>
 	<Header title={isEditing ? 'Edit Category' : 'New Category'}>
 		{#snippet leftIcon()}
 			<button
@@ -142,14 +129,14 @@
 		{/snippet}
 	</Header>
 
-	<div class="flex-1 space-y-6 overflow-y-auto p-4 pb-20">
+	<div class={styles.scrollContentStyle}>
 		{#if loading}
-			<div class="py-16 text-center text-discord-text-muted">Loading...</div>
+			<div class={styles.loadingStateStyle}>Loading...</div>
 		{:else}
 			<!-- Preview Card -->
-			<div class="flex justify-center py-4">
+			<div class={styles.previewContainerStyle}>
 				<div
-					class="flex h-20 w-20 items-center justify-center rounded-full border-4 border-discord-sidebar text-4xl shadow-lg transition-all duration-300"
+					class={styles.previewCircleStyle}
 					style="background-color: {color}33; color: {color}"
 				>
 					{icon}
@@ -157,7 +144,7 @@
 			</div>
 
 			<!-- Form Fields -->
-			<div class="space-y-4">
+			<div class={styles.formContainerStyle}>
 				<Input
 					label="Category Name"
 					placeholder="e.g. Travel"
@@ -166,39 +153,31 @@
 				/>
 
 				<div>
-					<label
-						for="icon-input"
-						class="mb-2 block px-1 text-xs font-bold tracking-wider text-discord-text-muted uppercase"
-						>Icon (Emoji)</label
-					>
-					<div class="mb-3 flex justify-center">
+					<label for="icon-input" class={styles.labelStyle}>Icon (Emoji)</label>
+					<div class={styles.iconInputWrapperStyle}>
 						<input
 							id="icon-input"
 							type="text"
 							value={icon}
 							oninput={handleIconInput}
 							placeholder="?"
-							class="h-16 w-16 rounded-xl border border-black/30 bg-discord-panel text-center text-3xl shadow-inner focus:ring-2 focus:ring-discord-blurple focus:outline-none"
+							class={styles.iconInputStyle}
 						/>
 					</div>
 					{#if iconError}
-						<p class="mt-1 px-1 text-center text-xs font-medium text-discord-red">{iconError}</p>
+						<p class={styles.errorTextStyle}>{iconError}</p>
 					{/if}
 				</div>
 
 				<div>
-					<h3
-						class="mb-2 block px-1 text-xs font-bold tracking-wider text-discord-text-muted uppercase"
-					>
-						Color Palette
-					</h3>
-					<div class="grid grid-cols-6 gap-3 p-1">
+					<h3 class={styles.labelStyle}>Color Palette</h3>
+					<div class={styles.colorGridStyle}>
 						{#each discordColors as c (c)}
 							<button
 								onclick={() => (color = c)}
-								class="aspect-square w-full rounded-full border-4 transition-all {color === c
-									? 'border-white'
-									: 'border-transparent hover:scale-110'}"
+								class="{styles.colorButtonStyle} {color === c
+									? styles.activeColorStyle
+									: styles.inactiveColorStyle}"
 								style="background-color: {c}"
 								aria-label="Color {c}"
 								type="button"
@@ -208,7 +187,7 @@
 				</div>
 			</div>
 
-			<div class="space-y-3 pt-4">
+			<div class={styles.footerActionsStyle}>
 				<Button variant="primary" fullWidth onclick={save} disabled={saving}>
 					{saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Category'}
 				</Button>
