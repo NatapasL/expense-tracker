@@ -12,3 +12,7 @@
    - If frontend code is changed, verify it works as expected.
    - Update `agents/contexts/implemented.md` to mark the step as completed.
 7. If the requirement changes the workflow or adds a new constraint, update `agents/contexts/instruction.md` accordingly.
+
+## Important
+
+**Do only 1 step.**
