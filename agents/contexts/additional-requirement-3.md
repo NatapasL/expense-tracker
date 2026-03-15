@@ -32,7 +32,7 @@ Refactor all components in the following directories to use the folder-based str
    - `Header.svelte`
    - `Input.svelte`
    - `Modal.svelte`
-5. [ ] Refactor components in `src/feature/`.
+5. [x] Refactor components in `src/feature/`.
 6. [ ] Refactor components in `src/screens/`:
    - `AddEditCategoryScreen.svelte`
    - `AddEditExpenseScreen.svelte`

@@ -1,30 +1,20 @@
 <script lang="ts">
-	import { Modal } from '../components/modal';
+	import { Modal } from '../../components/modal';
+	import type { MonthPickerProps } from './types';
+	import { MONTHS } from './constants';
+	import {
+		containerStyle,
+		yearSelectorStyle,
+		yearButtonStyle,
+		yearLabelStyle,
+		gridStyle,
+		monthButtonStyle,
+		jumpButtonStyle
+	} from './styles';
 
-	interface Props {
-		value: Date;
-		open: boolean;
-		onclose?: () => void;
-	}
-
-	let { value = $bindable(), open = $bindable(), onclose }: Props = $props();
+	let { value = $bindable(), open = $bindable(), onclose }: MonthPickerProps = $props();
 
 	let pickerYear = $state(value.getFullYear());
-
-	const months = [
-		'January',
-		'February',
-		'March',
-		'April',
-		'May',
-		'June',
-		'July',
-		'August',
-		'September',
-		'October',
-		'November',
-		'December'
-	];
 
 	function selectMonth(monthIndex: number) {
 		value = new Date(pickerYear, monthIndex, 1);
@@ -44,10 +34,10 @@
 </script>
 
 <Modal {open} onclose={handleClose} title="Select Month">
-	<div class="space-y-4">
-		<div class="flex items-center justify-between rounded-md bg-discord-sidebar p-2">
+	<div class={containerStyle}>
+		<div class={yearSelectorStyle}>
 			<button
-				class="rounded p-1 text-white transition-colors hover:bg-white/10"
+				class={yearButtonStyle}
 				onclick={() => pickerYear--}
 				aria-label="Previous Year"
 			>
@@ -63,9 +53,9 @@
 					stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg
 				>
 			</button>
-			<span class="text-lg font-bold text-white">{pickerYear}</span>
+			<span class={yearLabelStyle}>{pickerYear}</span>
 			<button
-				class="rounded p-1 text-white transition-colors hover:bg-white/10"
+				class={yearButtonStyle}
 				onclick={() => pickerYear++}
 				aria-label="Next Year"
 			>
@@ -83,13 +73,11 @@
 			</button>
 		</div>
 
-		<div class="grid grid-cols-3 gap-2">
-			{#each months as month, i (month)}
+		<div class={gridStyle}>
+			{#each MONTHS as month, i (month)}
 				{@const isSelected = i === value.getMonth() && pickerYear === value.getFullYear()}
 				<button
-					class="rounded-md px-2 py-3 text-sm font-medium transition-colors {isSelected
-						? 'bg-discord-blurple text-white'
-						: 'hover:bg-discord-sidebar-hover bg-discord-sidebar text-discord-text-normal hover:text-white'}"
+					class={monthButtonStyle(isSelected)}
 					onclick={() => selectMonth(i)}
 				>
 					{month.substring(0, 3)}
@@ -98,7 +86,7 @@
 		</div>
 
 		<button
-			class="w-full rounded-md bg-discord-sidebar py-2 text-sm font-medium text-discord-text-muted transition-colors hover:text-white"
+			class={jumpButtonStyle}
 			onclick={() => {
 				pickerYear = new Date().getFullYear();
 				selectMonth(new Date().getMonth());

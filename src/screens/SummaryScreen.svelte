@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Header } from '../components/header';
 	import { Card } from '../components/card';
-	import MonthPicker from '../feature/MonthPicker.svelte';
+	import { MonthPicker } from '../feature/month-picker';
 	import { db, type Expense, type Category } from '../libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
