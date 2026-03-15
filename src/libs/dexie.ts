@@ -32,7 +32,8 @@ db.version(4).stores({
 	expenses: 'id, category, amount, date, synced, deleted, updatedAt'
 });
 
-const defaultCategories: (Omit<Category, 'synced' | 'deleted' | 'updatedAt'> & Partial<Category>)[] = [
+const defaultCategories: (Omit<Category, 'synced' | 'deleted' | 'updatedAt'> &
+	Partial<Category>)[] = [
 	{ id: 'cat-food', name: 'Food', color: '#5865F2', icon: '🍔' },
 	{ id: 'cat-transport', name: 'Transportation', color: '#57F287', icon: '🚗' },
 	{ id: 'cat-edu', name: 'Education', color: '#FEE75C', icon: '📚' },
@@ -48,13 +49,13 @@ const defaultCategories: (Omit<Category, 'synced' | 'deleted' | 'updatedAt'> & P
 
 // Seed logic
 db.on('populate', async () => {
-	const now = Date.now();
-	const categoriesToSeed = defaultCategories.map(c => ({
+	const categoriesToSeed = defaultCategories.map((c) => ({
 		...c,
 		synced: 0,
 		deleted: 0,
-		updatedAt: now
+		updatedAt: 1
 	})) as Category[];
+
 	await db.categories.bulkAdd(categoriesToSeed);
 });
 
