@@ -1,18 +1,9 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	import { Card } from './card';
+	import { Card } from '../card';
+	import type { ModalProps } from './types';
 
-	interface Props {
-		open: boolean;
-		onclose: () => void;
-		title?: string;
-		children?: Snippet;
-		footer?: Snippet;
-		closeOnBackdrop?: boolean;
-	}
-
-	let { open, onclose, title, children, footer, closeOnBackdrop = true }: Props = $props();
+	let { open, onclose, title, children, footer, closeOnBackdrop = true }: ModalProps = $props();
 
 	function handleBackdropClick(e: MouseEvent) {
 		if (closeOnBackdrop && e.target === e.currentTarget) {
@@ -32,10 +23,10 @@
 		<div transition:fly={{ y: 20, duration: 150 }} class="w-full max-w-md">
 			<Card
 				padding="none"
-				class="flex max-h-[90vh] flex-col overflow-hidden bg-[var(--color-discord-bg)]"
+				class="flex max-h-[90vh] flex-col overflow-hidden bg-discord-bg"
 			>
 				{#if title}
-					<div class="flex flex-shrink-0 items-center justify-between border-b border-black/20 p-4">
+					<div class="flex shrink-0 items-center justify-between border-b border-black/20 p-4">
 						<h2 class="text-xl font-bold text-white">{title}</h2>
 						<button
 							class="text-discord-text-muted transition-colors hover:text-white focus:outline-none"
@@ -65,7 +56,7 @@
 
 				{#if footer}
 					<div
-						class="flex flex-shrink-0 justify-end gap-2 border-t border-black/20 bg-discord-sidebar p-4"
+						class="flex shrink-0 justify-end gap-2 border-t border-black/20 bg-discord-sidebar p-4"
 					>
 						{@render footer()}
 					</div>

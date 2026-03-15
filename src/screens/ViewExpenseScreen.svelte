@@ -2,7 +2,7 @@
 	import { Header } from '../components/header';
 	import { Card } from '../components/card';
 	import { Button } from '../components/button';
-	import Modal from '../components/Modal.svelte';
+	import { Modal } from '../components/modal';
 	import { db, type Expense, type Category } from '../libs/dexie';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';

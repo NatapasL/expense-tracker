@@ -1,13 +1,5 @@
 <script lang="ts">
-	import type { HTMLInputAttributes } from 'svelte/elements';
-
-	interface Props extends HTMLInputAttributes {
-		id?: string;
-		label?: string;
-		error?: string;
-		value?: string | number | null;
-		class?: string;
-	}
+	import type { InputProps } from './types';
 
 	let {
 		id = crypto.randomUUID(),
@@ -16,7 +8,7 @@
 		value = $bindable(),
 		class: className = '',
 		...rest
-	}: Props = $props();
+	}: InputProps = $props();
 </script>
 
 <div class="flex flex-col space-y-1 {className}">
