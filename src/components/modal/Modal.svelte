@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
 	import { Card } from '../card';
+	import { CloseIcon } from '../icons';
 	import type { ModalProps } from './types';
 	import {
 		backdropStyle,
@@ -20,6 +21,14 @@
 			onclose();
 		}
 	}
+
+	function handleKeyDown(e: KeyboardEvent) {
+		if (closeOnBackdrop && e.key === 'Escape') {
+			onclose();
+		}
+	}
+
+	const titleId = `modal-title-${Math.random().toString(36).slice(2, 9)}`;
 </script>
 
 {#if open}
@@ -27,28 +36,23 @@
 		class={backdropStyle}
 		transition:fade={{ duration: 150 }}
 		onclick={handleBackdropClick}
-		role="dialog"
-		aria-modal="true"
+		onkeydown={handleKeyDown}
+		role="presentation"
 	>
-		<div transition:fly={{ y: 20, duration: 150 }} class={containerStyle}>
+		<div
+			transition:fly={{ y: 20, duration: 150 }}
+			class={containerStyle}
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby={title ? titleId : undefined}
+			tabindex="-1"
+		>
 			<Card padding="none" class={cardContentStyle}>
 				{#if title}
 					<div class={headerStyle}>
-						<h2 class={titleStyle}>{title}</h2>
+						<h2 class={titleStyle} id={titleId}>{title}</h2>
 						<button class={closeButtonStyle} onclick={onclose} aria-label="Close">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"
-								></line></svg
-							>
+							<CloseIcon />
 						</button>
 					</div>
 				{/if}
