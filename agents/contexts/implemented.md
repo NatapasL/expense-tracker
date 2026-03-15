@@ -96,3 +96,9 @@
   - Implemented historical category suggestion in `AddEditExpenseScreen.svelte` based on the most frequent category for a given amount in the last 3 months.
   - Ensured auto-selection does not override manual user choice.
 
+## Additional Requirement 3
+
+- [x] **Step 1: Remove Daily Sync Logic**
+  - Removed `checkAndRunDailySync` function from `libs/sync.ts`.
+  - Confirmed manual sync button in Header still works on both Index and Summary screens.
+

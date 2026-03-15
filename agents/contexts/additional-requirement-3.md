@@ -11,7 +11,7 @@ Read `agents/contexts/instruction.md` first.
 
 ### Login and Sync Logic
 
-1. [ ] Remove daily sync logic (currently in `IndexScreen.svelte` or `libs/sync.ts`).
+1. [x] Remove daily sync logic (currently in `IndexScreen.svelte` or `libs/sync.ts`).
 2. [ ] Update login requirement logic:
    - Allow app use without login if local data exists.
    - Require login only if no local data exists on first load.

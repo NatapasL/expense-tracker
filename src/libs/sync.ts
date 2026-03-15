@@ -4,29 +4,6 @@ import type { Table, InsertType } from 'dexie';
 
 const SYNC_FILE_NAME = 'expense_tracker';
 
-export async function checkAndRunDailySync() {
-	if (!auth.isAuthenticated) return;
-
-	const lastSync = localStorage.getItem('last_sync_date');
-	const today = new Date().toISOString().split('T')[0];
-
-	if (lastSync !== today) {
-		console.log('Running daily sync...');
-		try {
-			// Check if we have any expenses. If not, it might be a first-time user on this device.
-			const expenseCount = await db.expenses.count();
-			// If no expenses, force a pull from sheets.
-			await syncToGoogleSheets(expenseCount === 0);
-			
-			localStorage.setItem('last_sync_date', today);
-			console.log('Daily sync completed.');
-		} catch (error) {
-			console.error('Failed to sync to Google Sheets:', error);
-		}
-	} else {
-		console.log('Daily sync already completed today.');
-	}
-}
 
 export async function syncToGoogleSheets(forcePull = false) {
 	if (!auth.accessToken) throw new Error('Not authenticated');
