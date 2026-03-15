@@ -208,10 +208,16 @@
 									class="flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors hover:bg-discord-panel"
 								>
 									<div
-										class="flex h-8 w-8 items-center justify-center rounded-full text-lg"
+										class="relative flex h-8 w-8 items-center justify-center rounded-full text-lg"
 										style="background-color: {cat.color}33; color: {cat.color}"
 									>
 										{cat.icon}
+										{#if expense.synced === 0}
+											<div
+												class="absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 border-discord-sidebar bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]"
+												title="Not synced"
+											></div>
+										{/if}
 									</div>
 									<div class="min-w-0 flex-1">
 										<div class="truncate text-[15px] font-medium text-white">{cat.name}</div>
@@ -250,8 +256,14 @@
 									class="flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors hover:bg-discord-panel"
 								>
 									<div class="min-w-0 flex-1">
-										<div class="truncate text-[15px] font-medium text-white">
+										<div class="flex items-center gap-2 truncate text-[15px] font-medium text-white">
 											{formatDateLong(expense.date)}
+											{#if expense.synced === 0}
+												<div
+													class="h-2 w-2 rounded-full bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]"
+													title="Not synced"
+												></div>
+											{/if}
 										</div>
 										<div class="text-xs text-discord-text-muted">{expense.description}</div>
 									</div>
