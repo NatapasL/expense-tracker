@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from '../components/Header.svelte';
 	import Card from '../components/Card.svelte';
-	import Button from '../components/Button.svelte';
+	import { Button } from '../components/button';
 	import Modal from '../components/Modal.svelte';
 	import { db, type Expense, type Category } from '../libs/dexie';
 	import { goto } from '$app/navigation';

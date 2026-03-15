@@ -110,3 +110,10 @@
   - Modified `auth.svelte.ts` to make `login()` return a `Promise<boolean>` that resolves after the Google GIS callback completes.
   - Updated `IndexScreen.svelte` and `SummaryScreen.svelte` to `await auth.login()` and immediately proceed with syncing upon successful authentication.
 
+- [/] **Step 4: Refactor Components Structure** (In Progress)
+  - Started refactoring components to a folder-based structure (`src/components/component-name/Component.svelte`).
+  - [x] Refactored `Button` component:
+    - Created `src/components/button/` directory.
+    - Split into `Button.svelte`, `types.ts`, and `index.ts`.
+    - Updated all import references in screens.
+

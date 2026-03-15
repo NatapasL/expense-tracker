@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { auth } from '../libs/auth.svelte';
-	import Button from '../components/Button.svelte';
+	import { Button } from '../components/button';
 	import Card from '../components/Card.svelte';
 </script>
 

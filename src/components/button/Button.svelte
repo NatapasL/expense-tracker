@@ -1,15 +1,5 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
-
-	type ButtonVariant = 'primary' | 'secondary' | 'danger';
-
-	interface Props extends HTMLButtonAttributes {
-		children?: Snippet;
-		variant?: ButtonVariant;
-		class?: string;
-		fullWidth?: boolean;
-	}
+	import type { ButtonProps } from './types';
 
 	let {
 		children,
@@ -17,7 +7,7 @@
 		class: className = '',
 		fullWidth = false,
 		...rest
-	}: Props = $props();
+	}: ButtonProps = $props();
 
 	let baseClasses =
 		'inline-flex justify-center items-center px-4 py-2 text-sm font-medium rounded transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-discord-bg disabled:opacity-50 disabled:cursor-not-allowed';

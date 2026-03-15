@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '../components/Header.svelte';
-	import Button from '../components/Button.svelte';
+	import { Button } from '../components/button';
 	import Input from '../components/Input.svelte';
 	import Card from '../components/Card.svelte';
 	import { db, type Expense, type Category } from '../libs/dexie';
