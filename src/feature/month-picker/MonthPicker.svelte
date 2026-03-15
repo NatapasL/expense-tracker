@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Modal } from '../../components/modal';
+	import { ChevronLeftIcon, ChevronRightIcon } from '../../components/icons';
 	import type { MonthPickerProps } from './types';
 	import { MONTHS } from './constants';
 	import {
@@ -41,17 +42,7 @@
 				onclick={() => pickerYear--}
 				aria-label="Previous Year"
 			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg
-				>
+				<ChevronLeftIcon size={20} />
 			</button>
 			<span class={yearLabelStyle}>{pickerYear}</span>
 			<button
@@ -59,17 +50,7 @@
 				onclick={() => pickerYear++}
 				aria-label="Next Year"
 			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg
-				>
+				<ChevronRightIcon size={20} />
 			</button>
 		</div>
 
