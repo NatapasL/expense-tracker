@@ -22,8 +22,8 @@
 	async function handleSync() {
 		if (syncing) return;
 		if (!auth.isAuthenticated) {
-			auth.login();
-			return;
+			const success = await auth.login();
+			if (!success) return;
 		}
 		syncing = true;
 		try {

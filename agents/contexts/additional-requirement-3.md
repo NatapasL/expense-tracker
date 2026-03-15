@@ -16,7 +16,7 @@ Read `agents/contexts/instruction.md` first.
    - Allow app use without login if local data exists.
    - Require login only if no local data exists on first load.
    - Require login when user clicks manual sync button if not logged in.
-3. [ ] Update sync button behavior:
+3. [x] Update sync button behavior:
    - Check login status.
    - If logged in, perform sync.
    - If not, show login screen/modal, and sync after successful login.

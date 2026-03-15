@@ -17,6 +17,7 @@ class AuthState {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private tokenClient: any = null;
+	private loginResolver: ((value: boolean) => void) | null = null;
 
 	init() {
 		if (typeof window === 'undefined' || this.isInitialized) return;
@@ -89,6 +90,17 @@ class AuthState {
 					localStorage.setItem('google_token_expiry', expiry.toString());
 					this.fetchUserInfo();
 				}
+				if (this.loginResolver) {
+					this.loginResolver(!!this.accessToken);
+					this.loginResolver = null;
+				}
+			},
+			error_callback: (error: unknown) => {
+				console.error('GIS Error:', error);
+				if (this.loginResolver) {
+					this.loginResolver(false);
+					this.loginResolver = null;
+				}
 			}
 		});
 		this.isInitialized = true;
@@ -124,11 +136,15 @@ class AuthState {
 		}
 	}
 
-	login() {
+	login(): Promise<boolean> {
 		if (this.tokenClient) {
-			this.tokenClient.requestAccessToken();
+			return new Promise((resolve) => {
+				this.loginResolver = resolve;
+				this.tokenClient.requestAccessToken();
+			});
 		} else {
 			console.error('Google Token Client not initialized');
+			return Promise.resolve(false);
 		}
 	}
 

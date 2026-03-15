@@ -106,4 +106,7 @@
   - Updated `+layout.svelte` auth guard to allow access if the user is authenticated OR has local data.
   - Updated `AddEditExpenseScreen.svelte` to refresh `hasLocalData` after saving.
   - Updated `handleSync` in `IndexScreen.svelte` and `SummaryScreen.svelte` to prompt for login if unauthenticated.
+- [x] **Step 3: Immediate Sync After Login**
+  - Modified `auth.svelte.ts` to make `login()` return a `Promise<boolean>` that resolves after the Google GIS callback completes.
+  - Updated `IndexScreen.svelte` and `SummaryScreen.svelte` to `await auth.login()` and immediately proceed with syncing upon successful authentication.
 
