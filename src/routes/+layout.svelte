@@ -39,7 +39,7 @@
 
 <LayoutScreen>
 	{#if auth.isInitialized}
-		{#if auth.isAuthenticated}
+		{#if auth.isAuthenticated || auth.hasLocalData}
 			{@render children()}
 		{:else}
 			<LoginScreen />

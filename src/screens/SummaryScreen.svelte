@@ -11,6 +11,7 @@
 	import { syncToGoogleSheets } from '../libs/sync';
 	import { formatCurrency } from '../libs/utils';
 	import { settings } from '../libs/settings.svelte.ts';
+	import { auth } from '../libs/auth.svelte';
 
 
 	let expenses: Expense[] = $state([]);
@@ -20,6 +21,10 @@
 
 	async function handleSync() {
 		if (syncing) return;
+		if (!auth.isAuthenticated) {
+			auth.login();
+			return;
+		}
 		syncing = true;
 		try {
 			await syncToGoogleSheets();

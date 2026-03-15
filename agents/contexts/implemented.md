@@ -101,4 +101,9 @@
 - [x] **Step 1: Remove Daily Sync Logic**
   - Removed `checkAndRunDailySync` function from `libs/sync.ts`.
   - Confirmed manual sync button in Header still works on both Index and Summary screens.
+- [x] **Step 2: Update Login Requirement Logic**
+  - Updated `auth.svelte.ts` to include `hasLocalData` state and `checkLocalData` logic using Dexie.
+  - Updated `+layout.svelte` auth guard to allow access if the user is authenticated OR has local data.
+  - Updated `AddEditExpenseScreen.svelte` to refresh `hasLocalData` after saving.
+  - Updated `handleSync` in `IndexScreen.svelte` and `SummaryScreen.svelte` to prompt for login if unauthenticated.
 

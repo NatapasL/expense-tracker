@@ -1,4 +1,5 @@
 import { PUBLIC_GOOGLE_CLIENT_ID } from '$env/static/public';
+import { db } from './dexie';
 
 declare global {
 	interface Window {
@@ -12,12 +13,15 @@ class AuthState {
 	user = $state<{ name: string; picture: string } | null>(null);
 	isInitialized = $state<boolean>(false);
 	tokenExpiry = $state<number | null>(null);
+	hasLocalData = $state<boolean>(false);
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	private tokenClient: any = null;
 
 	init() {
 		if (typeof window === 'undefined' || this.isInitialized) return;
+
+		this.checkLocalData();
 
 		// We check for window.google due to async loading of GIS script
 		if (window.google) {
@@ -49,6 +53,17 @@ class AuthState {
 				this.tokenExpiry = expiry;
 				this.fetchUserInfo();
 			}
+		}
+	}
+
+	async checkLocalData() {
+		if (typeof window === 'undefined') return;
+		try {
+			const count = await db.expenses.count();
+			this.hasLocalData = count > 0;
+		} catch (error) {
+			console.error('Failed to check local data:', error);
+			this.hasLocalData = false;
 		}
 	}
 

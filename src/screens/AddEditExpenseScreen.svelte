@@ -9,6 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
+	import { auth } from '../libs/auth.svelte';
 
 	interface Props {
 		/** If provided, we are in edit mode for this item id */
@@ -144,9 +145,11 @@
 
 		if (isEditing) {
 			await db.expenses.put(expenseData);
+			await auth.checkLocalData();
 			goto(resolve(`/expense/${expenseData.id}`));
 		} else {
 			await db.expenses.add(expenseData);
+			await auth.checkLocalData();
 			if (typeof sessionStorage !== 'undefined') {
 				sessionStorage.setItem('lastUsedDate', date);
 			}
