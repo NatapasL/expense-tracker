@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { InputProps } from './types';
-	import { containerStyle, labelStyle, inputStyle, errorStyle } from './styles';
+	import { styles } from './styles';
 
 	let {
 		id = crypto.randomUUID(),
@@ -12,14 +12,14 @@
 	}: InputProps = $props();
 </script>
 
-<div class="{containerStyle} {className}">
+<div class="{styles.container} {className}">
 	{#if label}
-		<label for={id} class={labelStyle}>
+		<label for={id} class={styles.label}>
 			{label}
 		</label>
 	{/if}
-	<input {id} bind:value class={inputStyle} {...rest} />
+	<input {id} bind:value class={styles.input} {...rest} />
 	{#if error}
-		<span class={errorStyle}>{error}</span>
+		<span class={styles.error}>{error}</span>
 	{/if}
 </div>

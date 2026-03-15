@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CardProps } from './types';
-	import { baseCardStyle, paddingStyle, variantStyle } from './styles';
+	import { styles } from './styles';
 
 	let {
 		children,
@@ -10,10 +10,10 @@
 		...rest
 	}: CardProps = $props();
 
-	let paddingClasses = $derived(paddingStyle[padding]);
-	let bgClass = $derived(variantStyle[variant]);
+	let paddingClasses = $derived(styles.padding[padding]);
+	let bgClass = $derived(styles.variant[variant]);
 </script>
 
-<div class="{bgClass} {baseCardStyle} {paddingClasses} {className}" {...rest}>
+<div class="{bgClass} {styles.base} {paddingClasses} {className}" {...rest}>
 	{@render children?.()}
 </div>

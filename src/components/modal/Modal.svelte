@@ -3,16 +3,7 @@
 	import { Card } from '../card';
 	import { CloseIcon } from '../icons';
 	import type { ModalProps } from './types';
-	import {
-		backdropStyle,
-		containerStyle,
-		cardContentStyle,
-		headerStyle,
-		titleStyle,
-		closeButtonStyle,
-		bodyStyle,
-		footerStyle
-	} from './styles';
+	import { styles } from './styles';
 
 	let { open, onclose, title, children, footer, closeOnBackdrop = true }: ModalProps = $props();
 
@@ -33,7 +24,7 @@
 
 {#if open}
 	<div
-		class={backdropStyle}
+		class={styles.backdrop}
 		transition:fade={{ duration: 150 }}
 		onclick={handleBackdropClick}
 		onkeydown={handleKeyDown}
@@ -41,28 +32,28 @@
 	>
 		<div
 			transition:fly={{ y: 20, duration: 150 }}
-			class={containerStyle}
+			class={styles.container}
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby={title ? titleId : undefined}
 			tabindex="-1"
 		>
-			<Card padding="none" class={cardContentStyle}>
+			<Card padding="none" class={styles.cardContent}>
 				{#if title}
-					<div class={headerStyle}>
-						<h2 class={titleStyle} id={titleId}>{title}</h2>
-						<button class={closeButtonStyle} onclick={onclose} aria-label="Close">
+					<div class={styles.header}>
+						<h2 class={styles.title} id={titleId}>{title}</h2>
+						<button class={styles.closeButton} onclick={onclose} aria-label="Close">
 							<CloseIcon />
 						</button>
 					</div>
 				{/if}
 
-				<div class={bodyStyle}>
+				<div class={styles.body}>
 					{@render children?.()}
 				</div>
 
 				{#if footer}
-					<div class={footerStyle}>
+					<div class={styles.footer}>
 						{@render footer()}
 					</div>
 				{/if}

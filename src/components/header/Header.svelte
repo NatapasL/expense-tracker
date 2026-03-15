@@ -1,37 +1,29 @@
 <script lang="ts">
 	import type { HeaderProps } from './types';
-	import {
-		headerStyle,
-		iconContainerLeftStyle,
-		iconContainerRightStyle,
-		titleContainerStyle,
-		buttonTitleStyle,
-		textTitleStyle,
-		dropdownArrowStyle
-	} from './styles';
+	import { styles } from './styles';
 
 	let { title, leftIcon, rightIcon, onclick, clickable = false }: HeaderProps = $props();
 </script>
 
-<header class={headerStyle}>
-	<div class={iconContainerLeftStyle}>
+<header class={styles.header}>
+	<div class={styles.iconContainerLeft}>
 		{@render leftIcon?.()}
 	</div>
 
-	<div class={titleContainerStyle}>
+	<div class={styles.titleContainer}>
 		{#if clickable}
-			<button class={buttonTitleStyle} {onclick}>
+			<button class={styles.buttonTitle} {onclick}>
 				{title}
-				<span class={dropdownArrowStyle}>▼</span>
+				<span class={styles.dropdownArrow}>▼</span>
 			</button>
 		{:else}
-			<h1 class={textTitleStyle}>
+			<h1 class={styles.textTitle}>
 				{title}
 			</h1>
 		{/if}
 	</div>
 
-	<div class={iconContainerRightStyle}>
+	<div class={styles.iconContainerRight}>
 		{@render rightIcon?.()}
 	</div>
 </header>

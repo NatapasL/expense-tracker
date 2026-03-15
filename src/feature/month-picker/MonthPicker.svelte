@@ -3,15 +3,7 @@
 	import { ChevronLeftIcon, ChevronRightIcon } from '../../components/icons';
 	import type { MonthPickerProps } from './types';
 	import { MONTHS } from './constants';
-	import {
-		containerStyle,
-		yearSelectorStyle,
-		yearButtonStyle,
-		yearLabelStyle,
-		gridStyle,
-		monthButtonStyle,
-		jumpButtonStyle
-	} from './styles';
+	import { styles } from './styles';
 
 	let { value = $bindable(), open = $bindable(), onclose }: MonthPickerProps = $props();
 
@@ -35,18 +27,18 @@
 </script>
 
 <Modal {open} onclose={handleClose} title="Select Month">
-	<div class={containerStyle}>
-		<div class={yearSelectorStyle}>
+	<div class={styles.container}>
+		<div class={styles.yearSelector}>
 			<button
-				class={yearButtonStyle}
+				class={styles.yearButton}
 				onclick={() => pickerYear--}
 				aria-label="Previous Year"
 			>
 				<ChevronLeftIcon size={20} />
 			</button>
-			<span class={yearLabelStyle}>{pickerYear}</span>
+			<span class={styles.yearLabel}>{pickerYear}</span>
 			<button
-				class={yearButtonStyle}
+				class={styles.yearButton}
 				onclick={() => pickerYear++}
 				aria-label="Next Year"
 			>
@@ -54,11 +46,11 @@
 			</button>
 		</div>
 
-		<div class={gridStyle}>
+		<div class={styles.grid}>
 			{#each MONTHS as month, i (month)}
 				{@const isSelected = i === value.getMonth() && pickerYear === value.getFullYear()}
 				<button
-					class={monthButtonStyle(isSelected)}
+					class={styles.monthButton(isSelected)}
 					onclick={() => selectMonth(i)}
 				>
 					{month.substring(0, 3)}
@@ -67,7 +59,7 @@
 		</div>
 
 		<button
-			class={jumpButtonStyle}
+			class={styles.jumpButton}
 			onclick={() => {
 				pickerYear = new Date().getFullYear();
 				selectMonth(new Date().getMonth());

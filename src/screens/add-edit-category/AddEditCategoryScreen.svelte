@@ -6,7 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { discordColors } from './constants';
-	import * as styles from './styles';
+	import { styles } from './styles';
 
 	interface Props {
 		id?: string;
@@ -103,7 +103,7 @@
 	}
 </script>
 
-<div class={styles.containerStyle}>
+<div class={styles.container}>
 	<Header title={isEditing ? 'Edit Category' : 'New Category'}>
 		{#snippet leftIcon()}
 			<button
@@ -129,14 +129,14 @@
 		{/snippet}
 	</Header>
 
-	<div class={styles.scrollContentStyle}>
+	<div class={styles.scrollContent}>
 		{#if loading}
-			<div class={styles.loadingStateStyle}>Loading...</div>
+			<div class={styles.loadingState}>Loading...</div>
 		{:else}
 			<!-- Preview Card -->
-			<div class={styles.previewContainerStyle}>
+			<div class={styles.previewContainer}>
 				<div
-					class={styles.previewCircleStyle}
+					class={styles.previewCircle}
 					style="background-color: {color}33; color: {color}"
 				>
 					{icon}
@@ -144,7 +144,7 @@
 			</div>
 
 			<!-- Form Fields -->
-			<div class={styles.formContainerStyle}>
+			<div class={styles.formContainer}>
 				<Input
 					label="Category Name"
 					placeholder="e.g. Travel"
@@ -153,31 +153,31 @@
 				/>
 
 				<div>
-					<label for="icon-input" class={styles.labelStyle}>Icon (Emoji)</label>
-					<div class={styles.iconInputWrapperStyle}>
+					<label for="icon-input" class={styles.label}>Icon (Emoji)</label>
+					<div class={styles.iconInputWrapper}>
 						<input
 							id="icon-input"
 							type="text"
 							value={icon}
 							oninput={handleIconInput}
 							placeholder="?"
-							class={styles.iconInputStyle}
+							class={styles.iconInput}
 						/>
 					</div>
 					{#if iconError}
-						<p class={styles.errorTextStyle}>{iconError}</p>
+						<p class={styles.errorText}>{iconError}</p>
 					{/if}
 				</div>
 
 				<div>
-					<h3 class={styles.labelStyle}>Color Palette</h3>
-					<div class={styles.colorGridStyle}>
+					<h3 class={styles.label}>Color Palette</h3>
+					<div class={styles.colorGrid}>
 						{#each discordColors as c (c)}
 							<button
 								onclick={() => (color = c)}
-								class="{styles.colorButtonStyle} {color === c
-									? styles.activeColorStyle
-									: styles.inactiveColorStyle}"
+								class="{styles.colorButton} {color === c
+									? styles.activeColor
+									: styles.inactiveColor}"
 								style="background-color: {c}"
 								aria-label="Color {c}"
 								type="button"
@@ -187,7 +187,7 @@
 				</div>
 			</div>
 
-			<div class={styles.footerActionsStyle}>
+			<div class={styles.footerActions}>
 				<Button variant="primary" fullWidth onclick={save} disabled={saving}>
 					{saving ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Category'}
 				</Button>
