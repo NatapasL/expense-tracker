@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Header } from '../components/header';
-	import { Card } from '../components/card';
-	import { Button } from '../components/button';
-	import { Modal } from '../components/modal';
-	import { db, type Category } from '../libs/dexie';
+	import { Header } from '@/components/header';
+	import { Card } from '@/components/card';
+	import { Button } from '@/components/button';
+	import { Modal } from '@/components/modal';
+	import { db, type Category } from '@/libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';

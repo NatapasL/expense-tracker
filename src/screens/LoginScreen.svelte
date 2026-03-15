@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { auth } from '../libs/auth.svelte';
-	import { Button } from '../components/button';
-	import { Card } from '../components/card';
+	import { auth } from '@/libs/auth.svelte';
+	import { Button } from '@/components/button';
+	import { Card } from '@/components/card';
 </script>
 
 <div class="flex h-full min-h-[80vh] flex-col items-center justify-center px-4">

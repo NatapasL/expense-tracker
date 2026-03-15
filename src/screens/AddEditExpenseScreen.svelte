@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { Header } from '../components/header';
-	import { Button } from '../components/button';
-	import { Input } from '../components/input';
-	import { Card } from '../components/card';
-	import { db, type Expense, type Category } from '../libs/dexie';
+	import { Header } from '@/components/header';
+	import { Button } from '@/components/button';
+	import { Input } from '@/components/input';
+	import { Card } from '@/components/card';
+	import { db, type Expense, type Category } from '@/libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { CURRENCY_SYMBOL } from '../libs/constants';
-	import { auth } from '../libs/auth.svelte';
+	import { CURRENCY_SYMBOL } from '@/libs/constants';
+	import { auth } from '@/libs/auth.svelte';
 
 	interface Props {
 		/** If provided, we are in edit mode for this item id */
@@ -84,7 +84,7 @@
 
 		const threeMonthsAgo = Date.now() - 3 * 30 * 24 * 60 * 60 * 1000;
 
-		console.log(parsedAmount)
+		console.log(parsedAmount);
 		db.expenses
 			.where('amount')
 			.equals(parsedAmount)

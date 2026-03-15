@@ -1,5 +1,5 @@
 <script lang="ts">
-	import CategoryListScreen from '../../screens/CategoryListScreen.svelte';
+	import CategoryListScreen from '@/screens/CategoryListScreen.svelte';
 </script>
 
 <CategoryListScreen />

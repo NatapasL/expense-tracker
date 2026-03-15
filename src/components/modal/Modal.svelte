@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
-	import { Card } from '../card';
-	import { CloseIcon } from '../icons';
+	import { Card } from '@/components/card';
+	import { CloseIcon } from '@/components/icons';
 	import type { ModalProps } from './types';
 	import { styles } from './styles';
 

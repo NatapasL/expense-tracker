@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Header } from '../../components/header';
-	import { Button } from '../../components/button';
-	import { Input } from '../../components/input';
-	import { db, type Category } from '../../libs/dexie';
+	import { Header } from '@/components/header';
+	import { Button } from '@/components/button';
+	import { Input } from '@/components/input';
+	import { db, type Category } from '@/libs/dexie';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { discordColors } from './constants';

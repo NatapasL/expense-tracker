@@ -11,6 +11,9 @@ const config = {
 		}),
 		paths: {
 			base: (process.env.BASE_PATH?.replace(/\/$/, '') || (process.env.NODE_ENV === 'production' ? '/expense-tracker' : '')),
+		},
+		alias: {
+			"@/*": "./src/*",
 		}
 	},
 	vitePlugin: {

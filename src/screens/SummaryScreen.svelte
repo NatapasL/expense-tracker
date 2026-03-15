@@ -1,18 +1,17 @@
 <script lang="ts">
-	import { Header } from '../components/header';
-	import { Card } from '../components/card';
-	import { MonthPicker } from '../feature/month-picker';
-	import { db, type Expense, type Category } from '../libs/dexie';
+	import { Header } from '@/components/header';
+	import { Card } from '@/components/card';
+	import { MonthPicker } from '@/feature/month-picker';
+	import { db, type Expense, type Category } from '@/libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
 	import { CURRENCY_SYMBOL } from '../libs/constants';
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
-	import { syncToGoogleSheets } from '../libs/sync';
-	import { formatCurrency } from '../libs/utils';
-	import { settings } from '../libs/settings.svelte.ts';
-	import { auth } from '../libs/auth.svelte';
-
+	import { syncToGoogleSheets } from '@/libs/sync';
+	import { formatCurrency } from '@/libs/utils';
+	import { settings } from '@/libs/settings.svelte';
+	import { auth } from '@/libs/auth.svelte';
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
@@ -54,13 +53,16 @@
 		settings.selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 	);
 
-
 	$effect(() => {
 		const start = startOfMonth;
 		const end = endOfMonth;
 
 		const expensesObservable = liveQuery(() =>
-			db.expenses.where('date').between(start, end).filter((e) => e.deleted === 0).toArray()
+			db.expenses
+				.where('date')
+				.between(start, end)
+				.filter((e) => e.deleted === 0)
+				.toArray()
 		);
 		const expensesSub = expensesObservable.subscribe((val) => {
 			expenses = val || [];
@@ -91,7 +93,11 @@
 		) {
 			days = today.getDate(); // Use days passed if current month
 		} else {
-			days = new Date(settings.selectedDate.getFullYear(), settings.selectedDate.getMonth() + 1, 0).getDate(); // Total days if past month
+			days = new Date(
+				settings.selectedDate.getFullYear(),
+				settings.selectedDate.getMonth() + 1,
+				0
+			).getDate(); // Total days if past month
 		}
 
 		return totalSpent / (days || 1);
@@ -122,9 +128,7 @@
 		const monthEnd = new Date(year, month + 1, 0);
 		const totalDays = monthEnd.getDate();
 		const today = new Date();
-		const isCurrentMonth =
-			today.getMonth() === month &&
-			today.getFullYear() === year;
+		const isCurrentMonth = today.getMonth() === month && today.getFullYear() === year;
 
 		const firstDayOfWeek = monthStart.getDay(); // 0 (Sun) to 6 (Sat)
 		// Distance to the first Sunday (end of first calendar week)

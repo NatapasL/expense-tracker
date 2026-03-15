@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { page } from '$app/stores';
 	import { resolve } from '$app/paths';
-	import { auth } from '../libs/auth.svelte';
+	import { auth } from '@/libs/auth.svelte';
 
 	let { children }: { children: Snippet } = $props();
 

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import './layout.css';
-	import LayoutScreen from '../screens/LayoutScreen.svelte';
-	import LoginScreen from '../screens/LoginScreen.svelte';
-	import { auth } from '../libs/auth.svelte';
+	import LayoutScreen from '@/screens/LayoutScreen.svelte';
+	import LoginScreen from '@/screens/LoginScreen.svelte';
+	import { auth } from '@/libs/auth.svelte';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
@@ -16,12 +16,18 @@
 				immediate: true,
 				onRegisteredSW(swUrl: string | URL, r: ServiceWorkerRegistration | undefined) {
 					if (r) {
-						setInterval(async () => {
-							if (r.installing || !navigator.onLine) return;
-							if (typeof swUrl === 'string' && (await fetch(swUrl, { cache: 'no-store' })).status === 200) {
-								await r.update();
-							}
-						}, 60 * 60 * 1000); // Check every hour
+						setInterval(
+							async () => {
+								if (r.installing || !navigator.onLine) return;
+								if (
+									typeof swUrl === 'string' &&
+									(await fetch(swUrl, { cache: 'no-store' })).status === 200
+								) {
+									await r.update();
+								}
+							},
+							60 * 60 * 1000
+						); // Check every hour
 					}
 				},
 				onNeedRefresh() {
@@ -46,7 +52,9 @@
 		{/if}
 	{:else}
 		<div class="flex h-full min-h-screen items-center justify-center bg-gray-900 text-gray-100">
-			<div class="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+			<div
+				class="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"
+			></div>
 		</div>
 	{/if}
 </LayoutScreen>

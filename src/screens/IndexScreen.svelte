@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { Header } from '../components/header';
-	import { Card } from '../components/card';
-	import { MonthPicker } from '../feature/month-picker';
-	import { db, type Expense, type Category } from '../libs/dexie';
+	import { Header } from '@/components/header';
+	import { Card } from '@/components/card';
+	import { MonthPicker } from '@/feature/month-picker';
+	import { db, type Expense, type Category } from '@/libs/dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { CURRENCY_SYMBOL } from '../libs/constants';
-	import { syncToGoogleSheets } from '../libs/sync';
-	import { formatCurrency, formatDateLong } from '../libs/utils';
-	import { settings } from '../libs/settings.svelte.ts';
-	import { auth } from '../libs/auth.svelte';
-
+	import { CURRENCY_SYMBOL } from '@/libs/constants';
+	import { syncToGoogleSheets } from '@/libs/sync';
+	import { formatCurrency, formatDateLong } from '@/libs/utils';
+	import { settings } from '@/libs/settings.svelte';
+	import { auth } from '@/libs/auth.svelte';
 
 	let expenses: Expense[] = $state([]);
 	let categories: Category[] = $state([]);
@@ -53,14 +52,17 @@
 		settings.selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 	);
 
-
 	$effect(() => {
 		// Access derived values here to ensure Svelte 5 tracks them as dependencies for this effect
 		const start = startOfMonth;
 		const end = endOfMonth;
 
 		const expensesObservable = liveQuery(() =>
-			db.expenses.where('date').between(start, end).filter((e) => e.deleted === 0).toArray()
+			db.expenses
+				.where('date')
+				.between(start, end)
+				.filter((e) => e.deleted === 0)
+				.toArray()
 		);
 		const expensesSub = expensesObservable.subscribe((val) => {
 			expenses = val || [];
@@ -159,7 +161,9 @@
 			<h2 class="text-[13px] font-bold tracking-wider text-discord-text-muted uppercase">
 				Total Spent
 			</h2>
-			<div class="text-lg font-extrabold text-white">{CURRENCY_SYMBOL}{formatCurrency(totalSpent)}</div>
+			<div class="text-lg font-extrabold text-white">
+				{CURRENCY_SYMBOL}{formatCurrency(totalSpent)}
+			</div>
 		</Card>
 
 		<div class="flex rounded-md bg-discord-sidebar p-1">
@@ -177,13 +181,11 @@
 			>
 		</div>
 
-
 		{#if expenses.length === 0}
 			<div class="py-10 text-center text-discord-text-muted">
 				No expenses this month yet. Tap + to add one.
 			</div>
 		{:else if settings.groupedBy === 'date'}
-
 			{#each groupedExpensesByDate as [dateStr, group] (dateStr)}
 				<div class="space-y-1">
 					<div class="flex items-center justify-between px-1 pt-1">
@@ -256,7 +258,9 @@
 									class="flex cursor-pointer items-center gap-3 px-3 py-2 transition-colors hover:bg-discord-panel"
 								>
 									<div class="min-w-0 flex-1">
-										<div class="flex items-center gap-2 truncate text-[15px] font-medium text-white">
+										<div
+											class="flex items-center gap-2 truncate text-[15px] font-medium text-white"
+										>
 											{formatDateLong(expense.date)}
 											{#if expense.synced === 0}
 												<div

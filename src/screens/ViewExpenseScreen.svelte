@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { Header } from '../components/header';
-	import { Card } from '../components/card';
-	import { Button } from '../components/button';
-	import { Modal } from '../components/modal';
-	import { db, type Expense, type Category } from '../libs/dexie';
+	import { Header } from '@/components/header';
+	import { Card } from '@/components/card';
+	import { Button } from '@/components/button';
+	import { Modal } from '@/components/modal';
+	import { db, type Expense, type Category } from '@/libs/dexie';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { CURRENCY_SYMBOL } from '../libs/constants';
-	import { formatCurrency } from '../libs/utils';
+	import { CURRENCY_SYMBOL } from '@/libs/constants';
+	import { formatCurrency } from '@/libs/utils';
 
 	interface Props {
 		id: string;
