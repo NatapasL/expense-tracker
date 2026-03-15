@@ -24,7 +24,7 @@ Read `agents/contexts/instruction.md` first.
 ### Component Structure Refactoring
 
 Refactor all components in the following directories to use the folder-based structure:
-`Component.svelte` -> `component/Index.svelte` (or `Component.svelte`) with `index.ts`, `styles.ts`, `types.ts`, `constants.ts`, `helpers.ts` as needed. Move tailwind classes to `styles.ts`.
+`Component.svelte` -> `component/Index.svelte` (or `Component.svelte`) with `index.ts`, `styles.ts`, `types.ts`, `constants.ts`, `helpers.ts` as needed. Move tailwind classes to `styles.ts` (see convention in `src/components`). Move svg into `src/components/icons`.
 
 4. [ ] Refactor components in `src/components/`:
    - `Button.svelte`
