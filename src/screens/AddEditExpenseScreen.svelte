@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Header from '../components/Header.svelte';
+	import { Header } from '../components/header';
 	import { Button } from '../components/button';
 	import Input from '../components/Input.svelte';
 	import { Card } from '../components/card';

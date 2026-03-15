@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Header from '../components/Header.svelte';
+	import { Header } from '../components/header';
 	import { Card } from '../components/card';
 	import { Button } from '../components/button';
 	import Modal from '../components/Modal.svelte';

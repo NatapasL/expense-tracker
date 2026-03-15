@@ -120,4 +120,8 @@
     - Created `src/components/card/` directory.
     - Split into `Card.svelte`, `types.ts`, and `index.ts`.
     - Updated all import references in components and screens.
+  - [x] Refactored `Header` component:
+    - Created `src/components/header/` directory.
+    - Split into `Header.svelte`, `types.ts`, and `index.ts`.
+    - Updated all import references in screens.
 

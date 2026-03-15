@@ -1,15 +1,7 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import type { HeaderProps } from './types';
 
-	interface Props {
-		title: string;
-		leftIcon?: Snippet;
-		rightIcon?: Snippet;
-		onclick?: () => void;
-		clickable?: boolean;
-	}
-
-	let { title, leftIcon, rightIcon, onclick, clickable = false }: Props = $props();
+	let { title, leftIcon, rightIcon, onclick, clickable = false }: HeaderProps = $props();
 </script>
 
 <header
